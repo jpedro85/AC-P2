@@ -163,8 +163,8 @@
 		STRING "MAQUINA DE VENDA"
 		STRING "   Bem Vindo    ";
 		STRING "----------------";
-		STRING "2>Produtos      ";
-		STRING "1>Stock         ";
+		STRING "1>Produtos      ";
+		STRING "0>Stock         ";
 		STRING "----------------";
 
 	;Display Produtos
@@ -278,7 +278,7 @@
 		STRING "min: 0 	        ";
 		STRING "max: y          ";
 		STRING "----------------";
-		STRING "1>Tentar de novo";
+		STRING "Any>	Continue";
 		
 	;quando o utilizador insere uma palavra pass enrrada
 	Place 2780H	
@@ -347,7 +347,7 @@
 	ERRORDisplay_Dinehrio_SemStock :
 		STRING "----------------";
 		STRING " A Maquina nao  ";
-		STRING "   tem troco!   ";
+		STRING "   tem Stock!   ";
 		STRING "----------------";
 		STRING "                ";
 		STRING "1>Tentar de novo";
@@ -357,7 +357,7 @@
 	;													Diretivas das paginas
 	;--------------------------------------------------------------------------------------------------------------------------------
 		
-		OPTN_Y 						EQU 24C6H ;2480H + 70 (posisao do max)
+		OPTN_Y 						EQU 24C5H ;2480H + 70 (posisao do max)
 		
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;													Constantes
@@ -390,8 +390,10 @@
 		ARG2 : 	WORD 0							;Criação da variavel que permite passar argumentos para as funcoes
 		ARG3 : 	WORD 0							;Criação da variavel que permite passar argumentos para as funcoes
 		
-		TESTE :	WORD 127; para teste 
+		PLACE 1070H
+		TESTE :	WORD 3; para teste 
 		
+		gggggst EQU 5000H;dsa
 
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;													Display
@@ -406,24 +408,49 @@
 ;--------------------------------------------------------------------------------------------------------------------------------
 PLACE 0000H							;para colocar as introcoes no inicio da memoria
 Main :								;programa principal
-	MOV R0 , ARG1					;R0 fica com o valor do endereco da variavel que guarda a pagina a ser mostrada
+	MOV R0 , ARG1					;R0 fica com o valor do endereco do ARG1
 	MOV R1 , PER_EN_VALOR			;R1 fica com o endereco da varival para guardar o valor lido
-	MOV [R0] , Display_Main			;variavel que guarda a pagina fica com o enderco da pagina Main
-	CALLF Mostrar_Display			;Mostra o Display 
-;Main_LerInput :
-;	CALLF LerInput_OPTN				;chama a rotina que lê o input
-;	MOV R0 , [R1]					;R0 fica com o valor lido
-;	CMP R0 , 1						;compara R0 com 1
-;	JNE Comparacao2					;se R0 n for 1 salta a prosima instrossao
-;	CALL Mostrar_Stock				;chama a rotina que mostra o ecra stock
-;Comparacao2:
-;	CMP R0 , 2						;compara R0 com 2
-;	JNE Main_LerInput				;se nao for 2 salta para pedir outro valor de entrada
-;	CALL Mostrar_Produtos			;chama a rotina que mostra o ecra produtos
-;	JMP Main						;salta para o inicio
-	
-	
+Main_mostrar :
+	MOV R2 , Display_Main
+	MOV [R0] , R2					;ARG1 fica com o enderco da pagina Main
+	CALLF Mostrar_Display			;Mostra o Display ARG1
+	CALLF LerInput_OPTN				;Lê o input
+	MOV R2 , [R1]					;R0 fica com o valor lido
+	CMP R2 , 0						;compara R0 com 1
+	JNE Main_CMP_2					;se R0 n for 1 salta a prosima comparacao
+	CALL Mostrar_Stock				;chama a rotina que mostra o ecra stock
+	JMP Main_mostrar				;volta ao inicio
+Main_CMP_2:
+	CMP R2 , 1						;compara R0 com 2
+	JEQ Main_CMP_2_True				;se nao for 2 salta para pedir outro valor de entrada
+	MOV R2 , 49						;R2 = 1
+	MOV [R0] , R2					;ARG1 fica 1
+	Call Mostrar_ErrorDisplay_OPTN	;Mostra o erro que a opn escolhida n e valida
+	JMP Main_mostrar				;volta ao inicio
+Main_CMP_2_True:
+	CALL Mostrar_Produtos			;chama a rotina que mostra o ecra produtos
+	JMP Main_mostrar				;salta para o inicio
 
+
+Mostrar_Stock:
+	PUSH R0							;guarda o valor atual de R0
+	PUSH R1							;guarda o valor atual de R1
+	Mov R0 , gggggst					;
+	mov R1 , 8
+	Mov [R0] , R1
+	POP R1							;busca o valor atual de R1 inicial
+	POP R0							;busca o valor atual de R0 inicial
+	RET
+	
+Mostrar_Produtos:
+	PUSH R0							;guarda o valor atual de R0
+	PUSH R1							;guarda o valor atual de R1
+	Mov R0 , gggggst					;
+	mov R1 , 5
+	Mov [R0] , R1
+	POP R1							;busca o valor atual de R1 inicial
+	POP R0							;busca o valor atual de R0 inicial
+	RET
 ;--------------------------------------------------------------------------------------------------------------------------------
 ;											Rotinas do periferico entrada
 ;--------------------------------------------------------------------------------------------------------------------------------
@@ -446,7 +473,7 @@ LerInput_SENHA:
 ;--------------------------------------------------------------------------------------------------------------------------------
 
 ;Rotina para mosstrar a pagina que esta na variavel Display_Page ARG1 = Pagina a mostrar
-Mostrar_Display :					
+Mostrar_Display:					
 	PUSH R0							;guarda o valor atual de R0
 	PUSH R1 						;guarda o valor atual de R1
 	PUSH R2							;guarda o valor atual de R2
@@ -466,16 +493,30 @@ Ciclo_Mostrar1carater:
 	POP R0							;busca o valor atual de R0 inicial
 	RETF							;termina a rotina RETF pois esta rotina nao chamas outras
 
-Limpar_Display :
-	
-;Rotina para mosstrar a pagina de erro Opcao invalida ARG1 = MAX OPTN (que no max e 7)
-Mostrar_ErrorDisplay_OPTN :
 
-;	MOV R1 , PER_EN_VALOR			;R1 fica com o endereco da varival para guardar o valor lido
+;Rotina para mosstrar a pagina de erro Opcao invalida ARG1 = MAX OPTN (que no max e 7)
+Mostrar_ErrorDisplay_OPTN:
+	PUSH R0							;guarda o valor atual de R0
+	PUSH R1 						;guarda o valor atual de R1
+	PUSH R2							;guarda o valor atual de R2
 	MOV R1 , ARG1					;R1 fica com o valor do endereco do ARG1
 	MOV R0 , [R1]					;R0 fica com o valor do ARG1
 	MOV R2 , OPTN_Y					;R2 fica com o endereco do carater y do display ERRORDisplay_OPN
-	MOV [R2] , R1					;o carater y do display ERRORDisplay_OPN fica com o valor do ARG1
-	MOV [R1] , ERRORDisplay_OPN		;o ARG1 fica com o valor do endereco da pagina ERRORDisplay_OPN
-	CALLF Mostrar_Display
+	MOVB [R2] , R0					;o carater y do display ERRORDisplay_OPN fica com o valor do ARG1
+	MOV R2 , ERRORDisplay_OPN		;R2 fica com o endereco do display ERRORDisplay_OPN
+	MOV [R1] , R2					;o ARG1 fica com o valor do endereco da pagina ERRORDisplay_OPN
+	CALLF Mostrar_Display			;Call mostrar a pagia 
+Mostrar_ErrorDisplay_OPTN_Ler:
+	CALLF LerInput_OPTN				;Call ler input 
+;	MOV R2 , PER_EN_VALOR			;R2 fica com o endereco da variavel Per_En_Valor
+;	MOV R1 , [R2]					;R1 fica com o valor da variavel Per_En_Valor
+;	CMP R1 , 0 						;compara R1 com 0 	
+;	JEQ	Mostrar_ErrorDisplay_OPTN_Fim	;se for igual a 0 salta para o fim
+;	JMP Mostrar_ErrorDisplay_OPTN_Ler	;se nao for igual a 0 pede ourto valor
+;Mostrar_ErrorDisplay_OPTN_Fim:	
+	POP R2 							;busca o valor atual de R2 inicial
+	POP R1							;busca o valor atual de R1 inicial
+	POP R0							;busca o valor atual de R0 inicial
+	RET								;termina a rotina
+	
 	
