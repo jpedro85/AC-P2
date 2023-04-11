@@ -154,37 +154,37 @@
 	
 	Stock_Dineiro:
 		;Moedas 0.10
-		STRING "Moeda 10Cent"		;Nome
+		STRING "Moeda10Cent"		;Nome
 		STRING "05000"				;Quantidade
 		STRING "00"					;Preco Euros
 		STRING "10"					;Preco Cent
 		
 		;Moedas 0.20
-		STRING "Moeda 20Cent"		;Nome
+		STRING "Moeda20Cent"		;Nome
 		STRING "05000"				;Quantidade
 		STRING "00"					;Preco Euros
 		STRING "20"					;Preco Cent
 		
 		;Moedas 0.50
-		STRING "Moeda 50Cent"		;Nome
+		STRING "Moeda50Cent"		;Nome
 		STRING "05000"				;Quantidade
 		STRING "00"					;Preco Euros
 		STRING "50"					;Preco Cent
 		
 		;Moedas 1.00
-		STRING "Moeda 1Euros"		;Nome
+		STRING "Moeda1Euros"		;Nome
 		STRING "00010"				;Quantidade
 		STRING "01"					;Preco Euros
 		STRING "00"					;Preco Cent
 		
 		;Moedas 2.00
-		STRING "Moeda 2Euros"		;Nome
+		STRING "Moeda2Euros"		;Nome
 		STRING "00012"				;Quantidade
 		STRING "02"					;Preco Euros
 		STRING "00"					;Preco Cent
 		
 		;Moedas 5.00
-		STRING "Nota 5Euros "		;Nome
+		STRING "Nota 5Euros"		;Nome
 		STRING "05000"				;Quantidade
 		STRING "05"					;Preco Euros
 		STRING "00"					;Preco Cent
@@ -323,7 +323,6 @@
 		STRING "     Senha      ";
 		STRING "   Invalida     ";
 		STRING "----------------";
-		STRING "----------------";
 		STRING "1>Tentar de novo";
 		STRING "0>Cancelar      ";
 
@@ -394,8 +393,8 @@
 		
 		OPTN_Y 						EQU 24C5H ;2480H + 70 (posisao do max)
 		Byte1_Linha1_Stock				EQU 2810H ;2800H + 16 (primeiro da segunda linha)
-		Stock_X				EQU ---- ;2800H + 16 (primeiro da segunda linha)
-		Stock_Y				EQU ---- ;2800H + 16 (primeiro da segunda linha)
+		Stock_X				EQU 2858H ;2800H + 16 (primeiro da segunda linha)
+		Stock_Y				EQU 285AH ;2800H + 16 (primeiro da segunda linha)
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;													Constantes
 	;--------------------------------------------------------------------------------------------------------------------------------
@@ -425,7 +424,7 @@
 		PLACE 4000H
 		PER_EN_VALOR : 	WORD 0					;Criação da variavel global e inicializada a 0 que guarda o valor inserido
 		PER_EN_SENHA : 	TABLE 8					;Criação da variavel global e inicializada a 0 que guarda o valor inserido
-		Stock_Page	: 0							;Variavel que guarda a pagina atual do Stock
+		Stock_Page	EQU 0							;Variavel que guarda a pagina atual do Stock
 		ARG1 : 	WORD 0							;Criação da variavel que permite passar argumentos para as funcoes
 		ARG2 : 	WORD 0							;Criação da variavel que permite passar argumentos para as funcoes
 		ARG3 : 	WORD 0							;Criação da variavel que permite passar argumentos para as funcoes
@@ -473,22 +472,46 @@ Main_CMP_2_True:
 
 
 Mostrar_Stock:
-	PUSH R0							; guarda o valor atual de R0
-	PUSH R1							; guarda o valor atual de R1
-	MOV R1 , ARG1					; R1 tem agora o valor de do endereco da variavel que guarda a pagina a mostrar
-	MOV [R1] , Display_Stock 		; ARG1 ficao com o endereco da pagina Display_Stock
+;	PUSH R0							; guarda o valor atual de R0
+;	PUSH R1							; guarda o valor atual de R1
+;	PUSH R2
+;	PUSH R3		
+;	PUSH R4
+;	PUSH R5
+;	MOV R1 , ARG1					; R1 tem agora o valor de do endereco da variavel que guarda a pagina a mostrar
+;	MOV R2 , ARG2					; R1 tem agora o valor de do endereco da variavel que guarda a pagina a mostrar
+;	MOV R3 , Stock
+;	MOV R4 , Size_Stockitem
+;	MOV R5 , 4
+;	MUL R4 , R5
+;	ADD R4 , R3
+	
+;	MOV [R1] , R3
+;	MOV [R2] , R4
+	
 ;	Call CompletarPagina_Stock		; completa a pagina
-	CALLF Mostrar_Display    		;
-	CALLF LerInput_OPTN				;
-	MOV R1, PER_EN_VALOR			; R1 passa a ter o valor do endereco do PER_EN_VALOR
-	MOV R0, [R1]					; R0 passa a ter o valor do PER_EN_VALOR
-	CMP R0, 4           			; Verifica caso o Valor do periferico seja 4
-	JEQ voltar						; Se for termina a rotina e volta atraz
-	CMP R0, 1 						; Verifica caso o valor do perifericoo seja 1
-	JEQ ComparaPass					; Se for salta para a rotina de verificacao da pass
-	CALL Mostrar_ErrorDisplay_OPTN	; Se a opcao nao for nenhuma das duas mostra o display de erro
-voltar:
-	RETF							; Termina 
+;	MOV R5 , Display_Stock
+;	MOV [R1] , R5 		; ARG1 fica com o endereco da pagina Display_Stock
+;	CALLF Mostrar_Display    		;
+;	CALLF LerInput_OPTN				;
+;	MOV R1, PER_EN_VALOR			; R1 passa a ter o valor do endereco do PER_EN_VALOR
+;	MOV R0, [R1]					; R0 passa a ter o valor do PER_EN_VALOR
+;	CMP R0, 4           			; Verifica caso o Valor do periferico seja 4
+;	JEQ voltar						; Se for termina a rotina e volta atraz
+;	CMP R0, 1 						; Verifica caso o valor do perifericoo seja 1
+;	JEQ ComparaPass					; Se for salta para a rotina de verificacao da pass
+;	CALL Mostrar_ErrorDisplay_OPTN	; Se a opcao nao for nenhuma das duas mostra o display de erro
+
+
+;voltar:
+	MOV R1 , ARG1					; R1 tem agora o valor de do endereco da variavel que guarda a pagina a mostrar
+	MOV R2 , ARG2
+	mov R0 , Stock_Bebibas
+	MOV R4 , Byte1_Linha1_Stock
+	CALLF Completar_Linha_Stock;
+	
+	;rotina usada para escrever o nome e ea quantidade numa linha :R0 = item R4 = linha resul R4 = aponta para a prosima linha
+;Completar_Linha_Stock:
 	
 	
 Mostrar_Produtos:
@@ -547,20 +570,20 @@ Ciclo_Mostrar1carater:
 ;Limpar_Display:
 	
 ComparaPass:
-	MOV R3, PASS					; R3 passa a ter o valor do endereco da Pass guardada no sistema
-	MOV R2, [R3]					; R2 passa a ter o valor da Pass guardada no sistema
-	MOV R1, PER_EN_SENHA			; R1 passa a ter o valor do endereco da Pass inserida pelo cliente
-	MOV R0, [R1]					; R0 passa a ter o valor da Pass inserida pelo cliente
-	CMP R0, R2						; Compara a Pass do sistema com a Pass inserida pelo cliente
-	JEQ Mostrar_Display 			; Se a Pass for igual mostra o stock
-	JMP Mostrar_ErrorDisplay_Pass	; Se a Pass for diferente mostra o display de erro da pass
+;	MOV R3, PASS					; R3 passa a ter o valor do endereco da Pass guardada no sistema
+;	MOV R2, [R3]					; R2 passa a ter o valor da Pass guardada no sistema
+;	MOV R1, PER_EN_SENHA			; R1 passa a ter o valor do endereco da Pass inserida pelo cliente
+;	MOV R0, [R1]					; R0 passa a ter o valor da Pass inserida pelo cliente
+;	CMP R0, R2						; Compara a Pass do sistema com a Pass inserida pelo cliente
+;	JEQ Mostrar_Display 			; Se a Pass for igual mostra o stock
+;	JMP Mostrar_ErrorDisplay_Pass	; Se a Pass for diferente mostra o display de erro da pass
 
 
 ;--------------------------------------------------------------------------------------------------------------------------------
 ;											Rotinas do Display dinamico 
 ;--------------------------------------------------------------------------------------------------------------------------------
 
-;Rotina para completar a pagina Display_stock  ARG1 = Primeiro endereco elemento a ser escrito ARG2 = ultimo endereco ARG3 tamanho reust ARG1 = Numero de linhas escritas
+;Rotina para completar a pagina Display_stock  ARG1 = Primeiro endereco elemento a ser escrito ARG2 = ultimo endereco reust ARG1 = Numero de linhas escritas
 CompletarPagina_Stock:
 	PUSH R0							; guarda o valor de R0
 	PUSH R1							; guarda o valor de R1
@@ -576,7 +599,6 @@ CompletarPagina_Stock:
 	MOV R0 , [R1]					; R0 fica com o valor do ARG1
 	MOV R2 , ARG2					; R2 fica com o endereco do ARG2
 	MOV R1 , [R2]					; R1 fica com o valor do ARG2
-	MOV R3 , ARG3					; R3 fica com o endereco do ARG3
 	MOV R4 , R1			
 	SUB R4 , R0
 	MOV [R2] , R4					; ARG2 fica com o tamanho (o ultimo endereco - o primeiro)
@@ -607,7 +629,7 @@ CompletarPagina_Stock_CMP1_fim:
 	MOV R5 , 10						; R5 = 10
 	CMP R4 , R5						; compare se o numero de pagina é maior que 10
 	MOV R5 , Stock_Y				; R5 fica com o endereco do y do Display stock
-	JLE CompletarPagina_Stock_CMP1_fim	; se for R4 < 10
+	JLE CompletarPagina_Stock_CMP2_fim	; se for R4 < 10
 	ADD R5 , 1						; R5 fica com posisao das unidades
 	MOV R6 , 48						; numero para converter um numero em char
 	MOV R7 , R4						; copiar o valor de R4
@@ -627,21 +649,56 @@ CompletarPagina_Stock_CMP2_fim:
 	MOVB [R5] , R4					; escrever o max de paginas
 ;escrita do numero da pg fim
 	MOV R4 , Byte1_Linha1_Stock		; R4 fica com o valor do 1 byte da 1 linha vazia do stock 
-	MOV R5 , Size_Stockitem			; R3 fica com o tamanho do item
+	MOV R3 , Size_Stockitem			; R3 fica com o tamanho do item
+	MOV R5 , 16 					; R5 = tamanho da linha
+	MOV R6 , 0						; contador  = 0
 CompletarPagina_Ciclo:
-	CMP R1 , R2						; compara o R0 (primeiro elemento / atual) com R1 (ultimo elemento)
+	CMP R0 , R1						; compara o R0 (primeiro elemento / atual) com R1 (ultimo elemento)
 	JGT	CompletarPagina_FimCiclo	; se o atual maior que o ultimo termina
-	CallF CompletarPagina_Ciclo		; completa a linha
+	CallF Completar_Linha_Stock		; completa a linha
+	ADD R6 , 1						; contador++
 	ADD R0 , R3						; avanca R0 para o item seguint 
-	JMP Completar_PaginaCiclo		; volta a completar mais uma linha
+	JMP CompletarPagina_Ciclo		; volta a completar mais uma linha
 CompletarPagina_FimCiclo:
+	MOV [R1] , R6					; ARG1 fica com o numero de linhas escritas
+	POP R9							; busca o valor de R9
+	POP R8							; busca o valor de R8
+	POP R7							; ...
+	POP R6
+	POP R5
+	POP R4
+	POP R3
+	POP R2
+	POP R1
+	POP R0							; busca o valor de R0
+	RET
 
-
-;rotina usada para escrever o nome e ea quantidade numa linha
+;rotina usada para escrever o nome e ea quantidade numa linha :R0 = item R4 = linha resul R4 = aponta para a prosima linha
 Completar_Linha_Stock:
-	
+	PUSH R1							; guarda o valor de R1
+	MOV R1 , R0
+	PUSH R0							; guarda o valor de R0
+	MOV R0 , R1						; R0 = posisao inicial do item
+	PUSH R2							; guarda o valor de R2
+	PUSH R3							; guarda o valor de R3
+	MOV R1 , 16
+	MOV R2 , R4
+	ADD R2 , R1						; R2 = ultima posisao da linha
+Completar_Linha_Stock_Ciclo:
+	MOVB R3 , [R0]					; 
+	MOVB [R4] , R3					; Copia o Byte [R0] para [R4]
+	ADD R4 , 1						; prosimo byte da linha
+	ADD R0 , 1						; prosimo byte do item
+	CMP R4 , R2						; verificar se chegamos no final da linha
+	JLT	Completar_Linha_Stock_Ciclo	; se nao chegamos ao final escrever mais um byte
+	ADD R4 , 1						; avanca R0 para a linha seguinte
+	POP R3							; busca o valor de R3
+	POP R2							; busca o valor de R2
+	POP R0							; busca o valor de R0
+	POP R1							; busca o valor de R1
+	RETF
 
-;Rotina para completar a pagina Display_stock  ARG1 = Primeiro elemento a ser escrito ARG2 tamanho resultado pagina atual fica ARG1 e max PAGES fica no ARG2
+;Rotina para completar a pagina Display_stock  ARG1 = Primeiro elemento a ser escrito ARG2 tamanho do array (em items) resultado pagina atual fica ARG1 e max PAGES fica no ARG2
 ContarPaginas:
 	PUSH R0							; guarda o valor atual de R0
 	PUSH R1 						; guarda o valor atual de R1
@@ -649,28 +706,34 @@ ContarPaginas:
 	PUSH R3							; guarda o valor atual de R3
 	PUSH R4							; guarda o valor atual de R4
 	PUSH R5							; guarda o valor atual de R5
+	PUSH R6							; guarda o valor atual de R6
 	MOV R1 , ARG1 					; R1 fica com o endereco do ARG1
 	MOV R0 , [R1]					; R0 fica com o valor do ARG1
 	MOV R2 , ARG2					; R2 fica com o endereco do ARG2
 	MOV R3 , [R2]					; R3 fica com o valor do ARG2 = tamanho
 	MOV R4 , 0						; R4 fica com 0
 	MOV R5 , 0						; R5 fica com 0
+	MOV R6 , 0						; R6 = false
 ContarPaginas_Ciclo:
 	ADD R4 , 4						; incrementa o contador R4 em 4 (numero max de linhas)
 	ADD R5 , 1						; incrementa o contador R5 em 1 (mais uma pagina)
 	CMP R0 , R4						; compara o primeiro elemento R0 com o maior elemento posivel atual R4
 	JGE ContarPaginas_CMP2			; se R4 mair que o primerio elemento 
+	CMP R6 , 1
+	JEQ ContarPaginas_CMP2			; e se ainda nao tiver adicionado
+	MOV R6 , 1						;R6 = true
 	MOV [R1] , R5					; ARG1 fica com o resultado do contador R5 
 ContarPaginas_CMP2:
-	CMP R3 , R4						; compara se o maior elemento posivel atual R4 é maior que o tamanho
-	JLE ContarPaginas_Ciclo			; se o contador R4 for maior ou igual que o tamanho nao  ha mais paginas 
+	CMP R4 , R3						; compara se o maior elemento posivel atual R4 é maior que o tamanho
+	JLT ContarPaginas_Ciclo			; se o contador R4 for maior ou igual que o tamanho nao  ha mais paginas 
 	MOV [R2] , R5					; ARG2 fica com o resultado do contador R5 (numero de paginas)
-	POP R5							; guarda o valor atual de R5
-	POP R4 							; guarda o valor atual de R4
-	POP R3							; guarda o valor atual de R3
-	POP R2							; guarda o valor atual de R2
-	POP R1							; guarda o valor atual de R1
-	POP R0							; guarda o valor atual de R0
+	POP R6							; busca o valor atual de R6
+	POP R5							; busca o valor atual de R5
+	POP R4 							; busca o valor atual de R4
+	POP R3							; busca o valor atual de R3
+	POP R2							; busca o valor atual de R2
+	POP R1							; busca o valor atual de R1
+	POP R0							; busca o valor atual de R0
 	RETF
 	
 ;Rotina para mosstrar a pagina de erro Opcao invalida ARG1 = MAX OPTN (que no max e 7)
