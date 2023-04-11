@@ -298,7 +298,7 @@
 		STRING "                "; vem do array
 		STRING "                "; vem do array
 		STRING "                "; vem do array
-		STRING "Pg  X / Y     ";
+		STRING "Pg  X / Y       ";
 		STRING "0>Opcoes        ";
 
 	;--------------------------------------------------------------------------------------------------------------------------------
