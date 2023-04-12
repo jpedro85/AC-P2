@@ -8,184 +8,184 @@
 	Place 3000H 
 	Stock:
 		;Chocolate branco 1
-		STRING "Chocola.Branco"		;Nome
-		STRING "40"					;Quantidade
+		STRING "Cho. Branco"		;Nome
+		STRING "   40"					;Quantidade
 		STRING "01"					;Preco Euros
 		STRING "90"					;Preco Cent
 		
 		;Chocolate Preto 2
-		STRING "Chocola.Preto "		;Nome
-		STRING "25"					;Quantidade
+		STRING "Cho. Preto "		;Nome
+		STRING "   25"					;Quantidade
 		STRING "02"					;Preco Euros
 		STRING "00"					;Preco Cent
 		
 		;Chocolate M&MS 3
-		STRING "M&Ms          "		;Nome
-		STRING "99"					;Quantidade
+		STRING "M&Ms       "		;Nome
+		STRING "   99"					;Quantidade
 		STRING "01"					;Preco Euros
 		STRING "50"					;Preco Cent
 		
 		;Smarties 4
-		STRING "Smarties      "		;Nome
-		STRING "10"					;Quantidade
+		STRING "Smarties   "		;Nome
+		STRING "   10"				;Quantidade
 		STRING "01"					;Preco Euros
 		STRING "60"					;Preco Cent
 		
 		;Chocobom 5
-		STRING "Chocobom      "		;Nome
-		STRING "84"					;Quantidade
+		STRING "Chocobom   "		;Nome
+		STRING "   84"				;Quantidade
 		STRING "02"					;Preco Euros
 		STRING "70"					;Preco Cent
 		
 		;Toblerone 6
-		STRING "Toblerone     "		;Nome
-		STRING "85"				  	;Quantidade
+		STRING "Toblerone  "		;Nome
+		STRING "   85"				;Quantidade
 		STRING "03"					;Preco Euros
 		STRING "40"					;Preco Cent
 		
 		;Amendoins 7
-		STRING "M&Ms          "		;Nome
-		STRING "65"					;Quantidade
+		STRING "M&Ms       "		;Nome
+		STRING "   65"				;Quantidade
 		STRING "01"					;Preco Euros
 		STRING "10"					;Preco Cent
 		
 		;KitKat 8
-		STRING "KitKat        "		;Nome
-		STRING "70"					;Quantidade
+		STRING "KitKat     "		;Nome
+		STRING "   70"				;Quantidade
 		STRING "02"					;Preco Euros
 		STRING "30"					;Preco Cent
 		
 		;Twix 9
-		STRING "Twix          "		;Nome
-		STRING "88"					;Quantidade
+		STRING "Twix       "		;Nome
+		STRING "   88"				;Quantidade
 		STRING "00"					;Preco Euros
 		STRING "50"					;Preco Cent
 		
 		;Broas de Mel 10
-		STRING "Broas de Mel  "		;Nome
-		STRING "58"					;Quantidade
+		STRING "Broas de M."		;Nome
+		STRING "   58"				;Quantidade
 		STRING "02"					;Preco Euros
 		STRING "10"					;Preco Cent
 		
 		;Palitus Nutela 11
-		STRING "Palitos Nutela"		;Nome
-		STRING "53"					;Quantidade
+		STRING "Palitos Nut"		;Nome
+		STRING "   53"				;Quantidade
 		STRING "04"					;Preco Euros
 		STRING "00"					;Preco Cent
 	
 	Stock_Bebibas :
 		;Coca Cola 1
-		STRING "Coca Cola     "		;Nome
-		STRING "56"					;Quantidade
+		STRING "Coca Cola  "		;Nome
+		STRING "   56"				;Quantidade
 		STRING "03"					;Preco Euros
 		STRING "60"					;Preco Cent
 		
 		;Fanta laranja 2
-		STRING "Fanta laranja "		;Nome
-		STRING "23"				;Quantidade
+		STRING "Fanta lara."		;Nome
+		STRING "   23"				;Quantidade
 		STRING "03"					;Preco Euros
 		STRING "30"					;Preco Cent
 		
 		;Ice tea 3
-		STRING "IceTea limao  "		;Nome
-		STRING "27"					;Quantidade
+		STRING "IceTea lima"		;Nome
+		STRING "   27"				;Quantidade
 		STRING "01"					;Preco Euros
 		STRING "80"					;Preco Cent
 
 		;Pepsi 4
-		STRING "Pepsi         "		;Nome
-		STRING "14"					;Quantidade
+		STRING "Pepsi      "		;Nome
+		STRING "   14"				;Quantidade
 		STRING "02"					;Preco Euros
 		STRING "10"					;Preco Cent
 		
 		;Agua 5
-		STRING "Agua          "		;Nome
-		STRING "92"					;Quantidade
+		STRING "Agua       "		;Nome
+		STRING "   92"				;Quantidade
 		STRING "00"					;Preco Euros
 		STRING "50"					;Preco Cent
 		
 		;Laranjada 6
-		STRING "Laranjada     "		;Nome
-		STRING "16"					;Quantidade
+		STRING "Laranjada  "		;Nome
+		STRING "   16"				;Quantidade
 		STRING "02"					;Preco Euros
 		STRING "00"					;Preco Cent
 		
 		;Brisa 7
-		STRING "Brisa Maracuja"		;Nome
-		STRING "04"					;Quantidade
+		STRING "Brisa Mara."		;Nome
+		STRING "   04"				;Quantidade
 		STRING "01"					;Preco Euros
 		STRING "80"					;Preco Cent
 		
 		;Cha Doce 8
-		STRING "Cha Doce      "		;Nome
-		STRING "13"					;Quantidade
+		STRING "Cha Doce   "		;Nome
+		STRING "   13"				;Quantidade
 		STRING "01"					;Preco Euros
 		STRING "60"					;Preco Cent
 
 		;Cofe free 9
-		STRING "Cofe free     "		;Nome
-		STRING "91"					;Quantidade
+		STRING "Cofe free  "		;Nome
+		STRING "    91"				;Quantidade
 		STRING "01"					;Preco Euros
 		STRING "00"					;Preco Cent
 		
 		;Cofe Small 10
-		STRING "Cofe Small    "		;Nome
-		STRING "12"					;Quantidade
+		STRING "Cofe Small "		;Nome
+		STRING "   12"				;Quantidade
 		STRING "01"					;Preco Euros
 		STRING "70"					;Preco Cent
 		
 		;Cofe Big 11
-		STRING "Brisa laranja "		;Nome
-		STRING "11"					;Quantidade
+		STRING "Brisa lara."		;Nome
+		STRING "   11"				;Quantidade
 		STRING "02"					;Preco Euros
 		STRING "20"					;Preco Cent
 		
 		;Big 12
-		STRING "Big           "		;Nome
-		STRING "15"					;Quantidade
+		STRING "Big        "		;Nome
+		STRING "   15"				;Quantidade
 		STRING "08"					;Preco Euros
 		STRING "10"					;Preco Cent
 		
 		;SMOLL 13
-		STRING "Sumol         "		;Nome
-		STRING "24"					;Quantidade
+		STRING "Sumol      "		;Nome
+		STRING "   24"				;Quantidade
 		STRING "01"					;Preco Euros
 		STRING "50"					;Preco Cent
 	
 	Stock_Dineiro:
 		;Moedas 0.10
-		STRING "Moedas 10 Cent"		;Nome
-		STRING "99"					;Quantidade
+		STRING "Moeda10Cent"		;Nome
+		STRING "   99"				;Quantidade
 		STRING "00"					;Preco Euros
 		STRING "10"					;Preco Cent
 		
 		;Moedas 0.20
-		STRING "Moedas 20 Cent"		;Nome
-		STRING "50"				;Quantidade
+		STRING "Moeda20Cent"		;Nome
+		STRING "   50"				;Quantidade
 		STRING "00"					;Preco Euros
 		STRING "20"					;Preco Cent
 		
 		;Moedas 0.50
-		STRING "Moedas 50 Cent"		;Nome
-		STRING "10"					;Quantidade
+		STRING "Moeda50Cent"		;Nome
+		STRING "   10"				;Quantidade
 		STRING "00"					;Preco Euros
 		STRING "50"					;Preco Cent
 		
 		;Moedas 1.00
-		STRING "Moedas 1 Euro "		;Nome
-		STRING "73"				;Quantidade
+		STRING "Moeda 1Euro"		;Nome
+		STRING "   73"				;Quantidade
 		STRING "01"					;Preco Euros
 		STRING "00"					;Preco Cent
 		
 		;Moedas 2.00
-		STRING "Moedas 2 Euros"		;Nome
-		STRING "52"					;Quantidade
+		STRING "Moeda 2Euro"		;Nome
+		STRING "   52"				;Quantidade
 		STRING "02"					;Preco Euros
 		STRING "00"					;Preco Cent
 		
 		;Moedas 5.00
-		STRING "Nota 5 Euros  "		;Nome
-		STRING "10"				;Quantidade
+		STRING "Nota 5Euros"		;Nome
+		STRING "   10"				;Quantidade
 		STRING "05"					;Preco Euros
 		STRING "00"					;Preco Cent
 	;--------------------------------------------------------------------------------------------------------------------------------
@@ -298,9 +298,20 @@
 		STRING "                "; vem do array
 		STRING "                "; vem do array
 		STRING "                "; vem do array
-		STRING "Pg  X / Y       ";
+		STRING "Pg  X /Y        ";
 		STRING "0>Opcoes        ";
-
+	
+	;Display Inserir Senha
+	Place 2880H	
+	Display_InserirSenha : 
+		STRING "Introduza Senha ";
+		STRING "----------------"; 
+		STRING "                "; 
+		STRING "                ";  
+		STRING "    --------    ";  
+		STRING "----------------";
+		STRING "OK> Confirmar   ";
+		
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;													Displays De Erros Gerais
 	;--------------------------------------------------------------------------------------------------------------------------------
@@ -394,12 +405,13 @@
 		OPTN_Y 						EQU 24C5H ;2480H + 70 (posisao do max)
 		Byte1_Linha1_Stock				EQU 2810H ;2800H + 16 (primeiro da segunda linha)
 		Stock_X				EQU 2854H ;2800H + 16 (primeiro da segunda linha)
-		Stock_Y				EQU 2858H ;2800H + 16 (primeiro da segunda linha)
+		Stock_Y				EQU 2857H ;2800H + 16 (primeiro da segunda linha)
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;													Constantes
 	;--------------------------------------------------------------------------------------------------------------------------------
 		
 		CaraterVazio 				EQU 20H	; valor do espaco
+		CaraterAsterisco			EQU 2AH	; valor do *
 		Size_Display 				EQU 112	; Tamnho do Display em Bytes 112B 70H
 		Size_DisplayLine 			EQU 16	; Tamnho do da linha em Bytes 16B 10H
 
@@ -424,14 +436,19 @@
 	
 		PLACE 00B0H
 		PER_EN_VALOR : 	WORD 0					; Criação da variavel global e inicializada a 0 que guarda o valor inserido
-		PER_EN_SENHA : 	TABLE 8					; Criação da variavel global e inicializada a 0 que guarda o valor inserido
-		PER_EN_SENHA_END EQU 00C1H
-		Stock_Page		EQU 0					; Variavel que guarda a pagina atual do Stock
-		ARG1: 	WORD 0							; Criação da variavel que permite passar argumentos para as funcoes
-		ARG2: 	WORD 0							; Criação da variavel que permite passar argumentos para as funcoes
-		ARG3: 	WORD 0							; Criação da variavel que permite passar argumentos para as funcoes
+		Senha_Introduzida : TABLE 8				; Criação da variavel global para guardar a palavra pass
+		Senha_Introduzida_END EQU 00C1H
+		Atual_Page:		WORD 0					; Variavel que guarda a pagina atual do Stock
+		ARG1: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
+		ARG2: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
+		ARG3: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
 				
 		gggggst EQU 5000H;dsa
+		
+		PLACE 5010H
+		Senha : 								;variavel guarda a senha do stock
+			STRING "M@q2!Ve#"
+		Senha_END EQU 5018H
 
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;													Display
@@ -440,6 +457,13 @@
 		PLACE 0020H
 		Display: TABLE 112						; Reserva o espaço que representa o periferico de display
 		Display_Page_End 			EQU 0090H  	; Ultima endereco do Display
+		
+		Display2Line				EQU 0030
+		Display3Line				EQU 0040
+		Display4Line				EQU 0050
+		Display5Line				EQU 0060
+		Display6Line				EQU 0070
+		Display7Line				EQU 0080
 
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;													Periferico entrada
@@ -483,59 +507,100 @@ Main_CMP_2_True:
 	JMP Main						; salta para o inicio
 
 
-Mostrar_Stock1:
-	RET
 
+; Rotina usada para mostrar o stock
 Mostrar_Stock:
-;	PUSH R0							; guarda o valor atual de R0
-;	PUSH R1							; guarda o valor atual de R1
-;	PUSH R2
-;	PUSH R3		
-;	PUSH R4
-;	PUSH R5
-;	MOV R1 , ARG1					; R1 tem agora o valor de do endereco da variavel que guarda a pagina a mostrar
-;	MOV R2 , ARG2					; R1 tem agora o valor de do endereco da variavel que guarda a pagina a mostrar
-;	MOV R3 , Stock
-;	MOV R4 , Size_Stockitem
-;	MOV R5 , 4
-;	MUL R4 , R5
-;	ADD R4 , R3
-	
-;	MOV [R1] , R3
-;	MOV [R2] , R4
-	
-;	Call CompletarPagina_Stock		; completa a pagina
-;	MOV R5 , Display_Stock
-;	MOV [R1] , R5 		; ARG1 fica com o endereco da pagina Display_Stock
-;	CALLF Mostrar_Display    		;
-;	CALLF LerInput_OPTN				;
-;	MOV R1, PER_EN_VALOR			; R1 passa a ter o valor do endereco do PER_EN_VALOR
-;	MOV R0, [R1]					; R0 passa a ter o valor do PER_EN_VALOR
-;	CMP R0, 4           			; Verifica caso o Valor do periferico seja 4
-;	JEQ voltar						; Se for termina a rotina e volta atraz
-;	CMP R0, 1 						; Verifica caso o valor do perifericoo seja 1
-;	JEQ ComparaPass					; Se for salta para a rotina de verificacao da pass
-;	CALL Mostrar_ErrorDisplay_OPTN	; Se a opcao nao for nenhuma das duas mostra o display de erro
-
-
-;voltar:
-	MOV R1 , ARG1					; R1 tem agora o valor de do endereco da variavel que guarda a pagina a mostrar
+	PUSH R0							; guarda o valor atual de R0
+	PUSH R1							; guarda o valor atual de R1
+	PUSH R2							; ...
+	PUSH R3		
+	PUSH R4
+	PUSH R5							; guarda o valor atual de R5
+	PUSH R6
+MS_NovaSenha :
+	MOV R1 , ARG1					; R1 = endereco do ARG1
+	Call PedirSenha_Senha			; Pede uma senha
+	Call CompararSenha				; Valida a senha
+	MOV R0 , [R1]
+	CMP R0 , 1						; senha correta ?
+	JNZ MS_SenhaErrada				; se nao correta 
+	MOV R0 , Atual_Page				; R0 = endereco da cariavel Atual_Page
+	MOV R2 , 1						;
+	MOV [R0] , R2					; Atual_Page = 1 nao existe pg 0
+MS_completa_pg_indices1:				; o para comecar presisamos descobrios os enderecos do primeiro e do ultimo item que vai ser mostrado
+	MOV R4 , [R0]					; R4 = Atual_Page
+	MOV R5 , Size_Total
+	MOV [R1] , R5
+	CallF MaxPages
+	MOV R5 , [R1]					; R5 = max pages
+	CMP R4 , 0						; se Atual_Page <= 0 Atual_Page = max pg
+	JGT MS_completa_pg_indices2
+	MOV [R0] ,R5
+	JMP MS_completa_pg_indices1
+MS_completa_pg_indices2:
+	CMP R4 , R5						; se Atual_Page > MAX Atual_Page = 1
+	JLE MS_completa_pg_indices3
+	MOV R5 , 1
+	MOV [R0] ,R5
+	JMP MS_completa_pg_indices1
+MS_completa_pg_indices3:			; se Atual page for valido > 0 e <= max
+	MOV R2 , 4						; max de linhas por pages
+	MUL R4 , R2						; R4 *= 4 pages *4
+	MOV R3 , R4						; R3 = R4
+	SUB R4 , 1						; R4 = ultimo indice esperado com as pgs. cheias
+	SUB R3 , R2						; R3 = indice do primeiro elemento da pg
 	MOV R2 , ARG2
-	mov R0 , Stock_Bebibas
-	MOV R3 , Size_Stockitem
-	MOV R4 , 4
-	MUL R3 , R4
-	ADD R3 , R0
+	MOV [R1] , R3					; ARG1 = primeiro elemento
+	MOV [R2] , R4					; ARG2 = ultimo indice
+	CALLF CompletarPagina_Stock		; Completa a pg stock com as linhas
+MS_stock:
+	MOV R6 , Display_Stock			; R6 = endereco do Display_stock
+	MOV [R1] , R6					; ARG1 = Display_stock
+	CALLF Mostrar_Display			; Mostra o Display
+	Call LerInput					; espera um input
+	MOV R6 , [R1]					; R6 tem o input 
+	CMP R6 , 0
+	JEQ MostrarDisplayOPTN
+	MOV R6 , [R1]					; R6 = input das OPTN
+	CMP R6 , 0						; Back to Main ?
+	JEQ MS_Fim
+	CMP R6 , 1						; voltar 
+	JEQ MS_stock
+	CMP R6 , 2						; pg anterior
+	JEQ MS_completa_pg_indices1
+	CMP R6 , 3						; pg seguinte
+	JEQ MS_completa_pg_indices1
+	Call Mostrar_ErrorDisplay_OPTN
+	JMP MS_stock
+MS_SenhaErrada:
+	MOV R0 , ERRORDisplay_Senha_Invalida	; R0 = o endereco do Display senha invalida
+	MOV [R1] , R0							; ARG1 = o endereco do Display senha invalida
+	Call Mostrar_Display					; Mostra o Display
+	Call LerInput
+	MOV R2 , PER_EN_VALOR
+	MOV R0 , [R1]
+	CMP R0 , 0
+	JNZ MS_CMP2
+	JMP MS_Fim
+MS_CMP2 :
+	CMP R0 , 1
+	JEQ MS_NovaSenha
+	MOV R0 , 49
 	MOV [R1] , R0
-	MOV [R2] , R3
-	CALLF CompletarPagina_Stock;
+	Call Mostrar_ErrorDisplay_OPTN
+	JMP MS_SenhaErrada
+MS_Fim:
+	POP R6 							; busca o valor atual de R6 inicial
+	POP R5 							; busca o valor atual de R5 inicial
+	POP R4 							; busca o valor atual de R4 inicial
+	POP R3 							; busca o valor atual de R3 inicial
+	POP R2 							; busca o valor atual de R2 inicial
+	POP R1							; busca o valor atual de R1 inicial
+	POP R0							; busca o valor atual de R0 inicial
 	RET
-	
-	;Rotina para completar a pagina Display_stock  ARG1 = Primeiro endereco elemento a ser escrito ARG2 = ultimo endereco result ARG1 = Numero de linhas escritas
-;CompletarPagina_Stock:
-	
-	
-	
+
+
+
 	
 Mostrar_Produtos:
 	RET
@@ -556,30 +621,42 @@ LerInput_Ciclo:
 LerInput_Fim:					
 	MOVB R2 , [R0]					; R2 fica com o valor do periferico entrada
 	MOV R1 , PER_EN_VALOR
-	MOVB [R1] , R2					; a variavel que guarda o valor fica com o valor doperiferico de entrada
+	MOVB [R1] , R2					; a variavel que guarda o valor fica com o valor do periferico de entrada
 	CALLF LimparPerifericos
 	POP R2 							; busca o valor atual de R2 inicial
 	POP R1							; busca o valor atual de R1 inicial
 	POP R0							; busca o valor atual de R0 inicial
 	RET								; termina a rotina RET 
 
-;rotina utilizada para ler uma senha
-LerInput_Senha:
+;rotina utilizada para ler uma senha e atualizar a visualizacao
+PedirSenha_Senha:
 	PUSH R0							; guarda o valor atual de R0
 	PUSH R1 						; guarda o valor atual de R1
 	PUSH R2							; guarda o valor atual de R2
 	PUSH R3							; guarda o valor atual de R3
-	MOV R0 , PER_EN_SENHA			; R0 fica com o endereco do primeiro byte da seha (total 8 BYTES)
-	MOV R1 , PER_EN_VALOR
-	MOV R3 , PER_EN_SENHA_END
+	PUSH R4							; guarda o valor atual de R4
+	PUSH R5							; guarda o valor atual de R5
+	MOV R1 , ARG1					; R1 fica com o endereco do ARG1
+	MOV R0 , Display_InserirSenha 	; R0 fica com oendereco do display
+	MOV [R1] , R0					; ARG1 = endereco do display a mosra
+	CALLF Mostrar_Display			; desenha o display
+	MOV R0 , PER_EN_VALOR			; R0 = endereco da varival que guarda o valor lido 
+	MOV R1 , Senha_Introduzida		; R1 fica com o endereco do primeiro byte da senha (total 8 BYTES)
+	MOV R2 , Senha_Introduzida_END	; R2 = ultimo char da senha
+	MOV R3 , CaraterAsterisco		; R3 = char asterisco
+	MOV R4 , Display4Line			; R4 = primeiro endereco da linha 4 do display
+	ADD R4 , 4						; R4 = primerio endereco da senha a mostrar no display
 LerInput_Senha_Ciclo:
 	Call LerInput
-	MOVB R2 , [R1]					; R2 fica com o carater valor lido
-	MOVB [R0] , R2					; A posisao R0 da mem. fica com o carater lido
-	ADD R0 , 1
-	CMP R0 , R3						; comparar a posisao atual da senha com a ultima
+	MOVB R5 , [R0]					; R5 fica com o carater valor lido
+	MOVB [R1] , R5					; A posisao R1 da mem. fica com o carater lido
+	MOVB [R4] , R3					; o primeiro carater fica com asterisco
+	ADD R4 , 1						; R4 = char seguinte da senha
+	ADD R1 , 1						; R1 = endereco seguinte onde e para guardar a senha
+	CMP R1 , R2						; comparar a posisao atual da senha com a ultima
 	JLE LerInput_Senha_Ciclo		; se for <= que a ultima le um carater
-	CALLF LimparPerifericos
+	POP R5 							; busca o valor atual de R3 inicial
+	POP R4 							; busca o valor atual de R3 inicial
 	POP R3 							; busca o valor atual de R3 inicial
 	POP R2 							; busca o valor atual de R2 inicial
 	POP R1							; busca o valor atual de R1 inicial
@@ -750,6 +827,29 @@ ContarPaginas_CMP2:
 	POP R1							; busca o valor atual de R1
 	POP R0							; busca o valor atual de R0
 	RETF
+
+;Rotina usada para determinar o numero de pg nessessarias para caber todo o array ARG1= Size resultado ARG1 = pages
+MaxPages:
+	PUSH R0							; guarda o valor atual de R0
+	PUSH R1 						; guarda o valor atual de R1
+	PUSH R2							; guarda o valor atual de R2
+	PUSH R3							; guarda o valor atual de R3
+	MOV R1 , ARG1					; R1 = endereco ARG1
+	MOV R0 , [R1]					; R0 = ARG1
+	MOV R2 , R0						; R0 = R2
+	MOV R3 , 4						
+	DIV R0 , R3						; R0 = pages
+	MOD R2 , R3						; R0 / 4 tem resto 0 ?
+	CMP R2 , 0
+	JEQ MaxPages_CMP				; se sim ARG1 = R0
+	ADD R0 , 1						; se nao ARG1 = R0+1
+MaxPages_CMP:	
+	MOV [R1] , R0
+	POP R3							; busca o valor atual de R3
+	POP R2							; busca o valor atual de R2
+	POP R1							; busca o valor atual de R1
+	POP R0							; busca o valor atual de R0
+	RETF
 	
 ;Rotina para mosstrar a pagina de erro Opcao invalida ARG1 = MAX OPTN (que no max e 7)
 Mostrar_ErrorDisplay_OPTN:
@@ -780,6 +880,7 @@ Mostrar_ErrorDisplay_OPTN_Ler:
 ;--------------------------------------------------------------------------------------------------------------------------------
 ;											Rotinas Auxiliares
 ;--------------------------------------------------------------------------------------------------------------------------------
+
 ; rotina usada para ARG1 = valor a colocar ARG2 = endereco de onde colocar
 ColocarNumero2B:
 	PUSH R0							; guarda o valor atual de R0
@@ -809,8 +910,11 @@ ColocarNumero2B:
 	JMP ColocarNumero2B_Fim			; salta para o fim
 ColocarNumero2B_CMP_Fim:
 	ADD R0 , R3						; R0 tem o carater
+	MOV R5 , CaraterVazio
 	MOV R2 , ARG2
 	MOV R3 , [R2]
+	MOVB [R3] , R5					; as desenas e vaizio
+	ADD R3 , 1						; avanca par ao byte seguinte
 	MOVB [R3] , R0					; move as unidades para o sitio
 ColocarNumero2B_Fim:
 	POP R5							; busca o valor atual de R5
@@ -826,25 +930,71 @@ ConverterNumero2B:
 	PUSH R0							; guarda o valor atual de R0
 	PUSH R1 						; guarda o valor atual de R1
 	PUSH R2							; guarda o valor atual de R2
-	MOV R2 , ARG1					;
-	MOVB R0 , [R2]					; R0 fica o valor a colocar
-	MOV R1 , CaraterVazio			; R1 = CaraterVazio
-	CMP R0 , R1			
+	PUSH R3							; guarda o valor atual de R3
+	PUSH R4							; guarda o valor atual de R3
+	PUSH R5							; guarda o valor atual de R3
+	MOV R3 , 48						; numero para passar numeropara char
+	MOV R1 , ARG1					; R1 Tem o endereco do ARG1
+	MOVB R4 , [R1]					; R4 tem o valor do ARG1
+	MOVB R0 , [R4]					; Tem o carater das dezenas
+	MOV R2 , CaraterVazio			; R2 = CaraterVazio
+	CMP R0 , R2			
 	JEQ ConverterNumero_soUnidades  ; Se igual a vazio significa que so temos unidades
-	MOVB R1 , [R0]
+	SUB R0 , R3						; R0 tem as desenas
 	MOV R2 , 10
-	MUL R1 , R2						; o  byte das dezenas vale o numero vezes 10
-	ADD R0 , 1						; R0 avanca para o byte seguinte
-	MOVB R2 , [R0]					; R2 tem as unidades
-	ADD R1 , R2						; R1 tem o valor completo dezenas + unidades
-	MOV R2 , ARG1
-	JMP ConverterNumero_Fim			; sata para o fim
+	MUL R0 , R2						; o  byte das dezenas vale o numero vezes 10
+	ADD R4 , 1						; R4 avanca para o byte seguinte (carater das unidades)
+	MOV R5 , [R4]					; R5 tem o char unidades
+	SUB R5 , R3						; R5 tem as unidades
+	ADD R0 , R5						; R0 tem o valor completo dezenas + unidades
+	JMP ConverterNumero_Fim		; sata para o fim
 ConverterNumero_soUnidades:
-	ADD R0 , 1						; avanca R0 para o byte das unidades
-	MOVB R1 , [R0]					; ARG1 fica com oresultado
+	ADD R4 , 1						; avanca R4 para o byte seguinte
+	MOV R0 , [R4]					; R0 tem o char das unidades
+	SUB R0 , R3						; R0 tem as unidades
 ConverterNumero_Fim:
-	MOV [R2] , R1					;
+	MOV [R1] , R0					;
+	POP R5							; busca o valor atual de R5 inicial	
+	POP R4							; busca o valor atual de R4 inicial	
+	POP R3 							; busca o valor atual de R3 inicial	
 	POP R2 							; busca o valor atual de R2 inicial
 	POP R1							; busca o valor atual de R1 inicial
 	POP R0							; busca o valor atual de R0 inicial
 	RETF							; termina a rotina
+
+; Rotina usada para comparar as senhas Resultado fica no ARG1	
+CompararSenha:
+	PUSH R0							; guarda o valor atual de R0
+	PUSH R1 						; guarda o valor atual de R1
+	PUSH R2							; guarda o valor atual de R2
+	PUSH R3							; guarda o valor atual de R3
+	PUSH R4							; guarda o valor atual de R2
+	PUSH R5							; guarda o valor atual de R3
+	MOV R0 , Senha_Introduzida		; R0 = posisao inicial da senha introduzida
+	MOV R1 , Senha_Introduzida_END	; R1 = posisao inicial da senha introduzida
+	MOV R2 , Senha					; R2 = posisao inicial da senha certa
+	MOV R3 , Senha_END				; R3 = posicao final da senha certa
+CompararSenha_Ciclo:
+	MOV R4 , [R0]					; R4 = char da senha intrudozida
+	MOV R5 , [R2]					; R5 = char da certa
+	CMP R4 , R5						; compara os carateres da mesma posisao da senha introduzida e da certa
+	JNZ CompararSenha_False			; se forem diferentes entao a senha ja esta enrrada
+	ADD R0 , 1						; avanca para o prossimo carater
+	ADD R2 , 1						; avanca para o prossimo carater
+	CMP R2 , R3						; compara a posicao atual com a ultima
+	JLE	CompararSenha_Ciclo			; se ainda nao e maior que o ultimo da senha compara mais um char
+	MOV R0 , 1						; R0 = true
+	JMP CompararSenha_Fim		
+CompararSenha_False:
+	MOV R0 , 0						; R0 = false
+CompararSenha_Fim:
+	MOV R1 , ARG1
+	MOV [R1] , R0					; ARG1 = Resultado R0
+	POP R5							; busca o valor atual de R5 inicial	
+	POP R4							; busca o valor atual de R4 inicial	
+	POP R3 							; busca o valor atual de R3 inicial	
+	POP R2 							; busca o valor atual de R2 inicial
+	POP R1							; busca o valor atual de R1 inicial
+	POP R0							; busca o valor atual de R0 inicial
+	RET								; termina a rotina
+	
