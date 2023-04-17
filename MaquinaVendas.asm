@@ -479,7 +479,9 @@
 		PLACE 00B0H
 		PER_EN_VALOR : 	WORD 0					; Criação da variavel global e inicializada a 0 que guarda o valor inserido
 		Senha_Introduzida : TABLE 4				; Criação da variavel global para guardar a palavra pass
-		Senha_Introduzida_END EQU 00BAH
+		Senha_Introduzida_END EQU 00BAH			;
+		Dinheiro_Inserido_Eur WORD 0			; Valor inserido em Eurs
+		Dinheiro_Inserido_Cent WORD 0			; Valor inserido em Cents
 		Atual_Page:		WORD 0					; Variavel que guarda a pagina atual do Stock
 		ARG1: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
 		ARG2: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
@@ -958,7 +960,7 @@ Mostrar_ErrorDisplay_OPTN_Ler:
 ;											Rotinas Auxiliares
 ;--------------------------------------------------------------------------------------------------------------------------------
 
-; rotina usada para ARG1 = valor a colocar ARG2 = endereco de onde colocar
+; Rotina usada para ARG1 = valor a colocar ARG2 = endereco de onde colocar
 ColocarNumero2B:
 	PUSH R0							; guarda o valor atual de R0
 	PUSH R1 						; guarda o valor atual de R1
@@ -1008,8 +1010,8 @@ ConverterNumero2B:
 	PUSH R1 						; guarda o valor atual de R1
 	PUSH R2							; guarda o valor atual de R2
 	PUSH R3							; guarda o valor atual de R3
-	PUSH R4							; guarda o valor atual de R3
-	PUSH R5							; guarda o valor atual de R3
+	PUSH R4							; guarda o valor atual de R4
+	PUSH R5							; guarda o valor atual de R5
 	MOV R3 , 48						; numero para passar numeropara char
 	MOV R1 , ARG1					; R1 Tem o endereco do ARG1
 	MOVB R4 , [R1]					; R4 tem o valor do ARG1
@@ -1074,4 +1076,28 @@ CompararSenha_Fim:
 	POP R1							; busca o valor atual de R1 inicial
 	POP R0							; busca o valor atual de R0 inicial
 	RETF							; termina a rotina
-	
+
+Talao:
+	PUSH R0							; Guarda o valor atual do R0 sem ter influencia na memoria
+	PUSH R1							; Guarda o valor atual do R1 sem ter influencia na memoria
+	PUSH R2							; Guarda o valor atual do R2 sem ter influencia na memoria
+	PUSH R3 						; Guarda o valor atual do R3 sem ter influencia na memoria
+	PUSH R4 						; Guarda o valor atual do R4 sem ter influencia na memoria
+	PUSH R5 						; Guarda o valor atual do R5 sem ter influencia na memoria
+	PUSH R6 						; Guarda o valor atual do R6 sem ter influencia na memoria
+	PUSH R7 						; Guarda o valor atual do R7 sem ter influencia na memoria
+	MOV R0, ARG1					; Passa o valor do endereco do item para o R0
+	MOV R1, ARG2					; Passa o valor do endereco da quantidade de itens a comprar para o R1
+	MOV R2, 48						;
+	;MOV R2, Dinheiro_Inserido_Eur	; Passa o endereco da quantidade de Dinheiro inserido que seja igual a parte de Eurs
+	;MOV R3, Dinheiro_Inserido_Eur	; Passo o endereco da quantidade de Dinheiro inserido que seja igual a parte dos Cents
+	MOV R4, [R0]					; R4 vai possuir o endereco do Item 
+	MOV R5, 16						; R5 vai ser o valor necessario para nos sermos capazes de aceder ao preco do item relativamente ao Eurs
+	MOV R6, [R4+R5]					; R6 vai possuir o valor do preco do Item relativo a parte dos Eurs
+	SUB R6, R2						; Convertemos o valor de carater para um numero
+	MOV R5, 17						; R5 vai possuir o valor necessario para o sermos capazes de aceder ao preco do Item relativamente ao Cents
+	MOV R7, R4						; R7 vai possuir o endereco do Item como R4
+	ADD R7, R5						; R7 ao somarmos R5 ao R7 vamos possuir o endereco do preco do Item relativamente ao Cents
+	MOV [R0], R7					; A valor da memoria de R0 (ARG1) vai passar a possuir o valor de R7 (preco relativamente aos Cents)
+	CALLF ConverterNumero2B			; Chamamos a funcao para converter o valor de R7 para um Numero de 2 Bytes
+	MOV R7, [R0]					; R7 vai possuir agora o valor convertido da posicao da memoria de R0 resultante da funcao
