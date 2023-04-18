@@ -394,7 +394,7 @@
 
 	;mostrado quando a maquina nao tem troco
 	Place 2580H	
-	ERRORDisplay_Dinehrio_TrocoInvalido :
+	ERRORDisplay_Dinehrio_TrocoInvalido:
 		STRING "----------------";
 		STRING " A Maquina nao  ";
 		STRING "   tem troco!   ";
@@ -405,7 +405,7 @@
 		
 	;mostrado quando o utilizador nao insere o dinheiro suficiente
 	Place 2600H	
-	ERRORDisplay_Dinehrio_Insuficiente :
+	ERRORDisplay_Dinehrio_Insuficiente:
 		STRING "----------------";
 		STRING "O valor inserido";
 		STRING "e insuficiente! ";
@@ -477,11 +477,10 @@
 	;--------------------------------------------------------------------------------------------------------------------------------
 	
 		PLACE 00B0H
-		PER_EN_VALOR : 	WORD 0					; Criação da variavel global e inicializada a 0 que guarda o valor inserido
-		Senha_Introduzida : TABLE 4				; Criação da variavel global para guardar a palavra pass
+		PER_EN_VALOR: 	WORD 0					; Criação da variavel global e inicializada a 0 que guarda o valor inserido
+		Senha_Introduzida: TABLE 4				; Criação da variavel global para guardar a palavra pass
 		Senha_Introduzida_END EQU 00BAH			;
-		Dinheiro_Inserido_Eur WORD 0			; Valor inserido em Eurs
-		Dinheiro_Inserido_Cent WORD 0			; Valor inserido em Cents
+		Dinheiro_Inserido: WORD 0				; Dinheiro Inserido pelo Cliente (mostrado em Cents)
 		Atual_Page:		WORD 0					; Variavel que guarda a pagina atual do Stock
 		ARG1: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
 		ARG2: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
@@ -490,7 +489,7 @@
 		gggggst EQU 5000H;dsa
 		
 		PLACE 5010H
-		Senha : 								;variavel guarda a senha do stock
+		Senha: 								;variavel guarda a senha do stock
 			STRING "M@q2!Ve#"
 			;    4D 40 71 32 21 56 65 23
 		Senha_END EQU 5018H
@@ -907,7 +906,7 @@ Completar_Linha_Stock_Ciclo:
 	POP R1							; busca o valor de R1
 	RETF
 
-;Rotina usada para determinar o numero de pg nessessarias para caber todo o array ARG1= Size resultado ARG1 = pages
+;Rotina usada para determinar o numero de pg necessarias para caber todo o array ARG1= Size resultado ARG1 = pages
 MaxPages:
 	PUSH R0							; guarda o valor atual de R0
 	PUSH R1 						; guarda o valor atual de R1
@@ -978,7 +977,7 @@ ColocarNumero2B:
 	MOD R0 , R4						; ex: 92 Mod 10 = 2 , R0 tem as unidades
 	MOV R1 , [R2]					; R1 tem o total
 	SUB R1 , R0						; total - as unidades
-	DIV R1 , R4						; div poir 10 obtemos as dezenas , R1 tem as dezenas
+	DIV R1 , R4						; div por 10 obtemos as dezenas , R1 tem as dezenas
 	ADD R0 , R3						; R0 tem o carater
 	ADD R1 , R3						; R1 tem o carater 
 	MOV R2 , ARG2					; Tem o endereco do ARG2
@@ -993,7 +992,7 @@ ColocarNumero2B_CMP_Fim:
 	MOV R2 , ARG2
 	MOV R3 , [R2]
 	MOVB [R3] , R5					; as desenas e vaizio
-	ADD R3 , 1						; avanca par ao byte seguinte
+	ADD R3 , 1						; avanca para o byte seguinte
 	MOVB [R3] , R0					; move as unidades para o sitio
 ColocarNumero2B_Fim:
 	POP R5							; busca o valor atual de R5
@@ -1004,7 +1003,7 @@ ColocarNumero2B_Fim:
 	POP R0							; busca o valor atual de R0
 	RETF
 
-;rotina usada para converter 2 bytes  (1 das dezenas e outro das unidades) numnumero so ARG1 = posisao Result ARG1 = numero
+;rotina usada para converter 2 bytes  (1 das dezenas e outro das unidades) numnumero so ARG1 = posicao Result ARG1 = numero
 ConverterNumero2B:
 	PUSH R0							; guarda o valor atual de R0
 	PUSH R1 						; guarda o valor atual de R1
@@ -1012,7 +1011,7 @@ ConverterNumero2B:
 	PUSH R3							; guarda o valor atual de R3
 	PUSH R4							; guarda o valor atual de R4
 	PUSH R5							; guarda o valor atual de R5
-	MOV R3 , 48						; numero para passar numeropara char
+	MOV R3 , 48						; numero para passar para char
 	MOV R1 , ARG1					; R1 Tem o endereco do ARG1
 	MOVB R4 , [R1]					; R4 tem o valor do ARG1
 	MOVB R0 , [R4]					; Tem o carater das dezenas
@@ -1026,7 +1025,7 @@ ConverterNumero2B:
 	MOV R5 , [R4]					; R5 tem o char unidades
 	SUB R5 , R3						; R5 tem as unidades
 	ADD R0 , R5						; R0 tem o valor completo dezenas + unidades
-	JMP ConverterNumero_Fim		; sata para o fim
+	JMP ConverterNumero_Fim			; salta para o fim
 ConverterNumero_soUnidades:
 	ADD R4 , 1						; avanca R4 para o byte seguinte
 	MOV R0 , [R4]					; R0 tem o char das unidades
@@ -1049,17 +1048,17 @@ CompararSenha:
 	PUSH R3							; guarda o valor atual de R3
 	PUSH R4							; guarda o valor atual de R2
 	PUSH R5							; guarda o valor atual de R3
-	MOV R0 , Senha_Introduzida		; R0 = posisao inicial da senha introduzida
-	MOV R1 , Senha_Introduzida_END	; R1 = posisao inicial da senha introduzida
-	MOV R2 , Senha					; R2 = posisao inicial da senha certa
+	MOV R0 , Senha_Introduzida		; R0 = posicao inicial da senha introduzida
+	MOV R1 , Senha_Introduzida_END	; R1 = posicao inicial da senha introduzida
+	MOV R2 , Senha					; R2 = posicao inicial da senha certa
 	MOV R3 , Senha_END				; R3 = posicao final da senha certa
 CompararSenha_Ciclo:
-	MOVB R4 , [R0]					; R4 = char da senha intrudozida
+	MOVB R4 , [R0]					; R4 = char da senha introduzida
 	MOVB R5 , [R2]					; R5 = char da certa
-	CMP R4 , R5						; compara os carateres da mesma posisao da senha introduzida e da certa
-	JNZ CompararSenha_False			; se forem diferentes entao a senha ja esta enrrada
-	ADD R0 , 1						; avanca para o prossimo carater
-	ADD R2 , 1						; avanca para o prossimo carater
+	CMP R4 , R5						; compara os carateres da mesma posicao da senha introduzida e da certa
+	JNZ CompararSenha_False			; se forem diferentes entao a senha ja esta errada
+	ADD R0 , 1						; avanca para o proximo carater
+	ADD R2 , 1						; avanca para o proximo carater
 	CMP R2 , R3						; compara a posicao atual com a ultima
 	JLT	CompararSenha_Ciclo			; se ainda nao e maior que o ultimo da senha compara mais um char
 	MOV R0 , 1						; R0 = true
@@ -1077,27 +1076,43 @@ CompararSenha_Fim:
 	POP R0							; busca o valor atual de R0 inicial
 	RETF							; termina a rotina
 
-Talao:
+; Funcao efetua a conta para verificar se e necessario dar troco ou nao e se o dinheiro inserido e sufeciente para efetuar a compra
+; Preco Total do item R2
+; Dinheiro Inserido R6
+; R7 fica guardado o valor do subtracao do R2 com R6
+CalcularTroco:
 	PUSH R0							; Guarda o valor atual do R0 sem ter influencia na memoria
 	PUSH R1							; Guarda o valor atual do R1 sem ter influencia na memoria
 	PUSH R2							; Guarda o valor atual do R2 sem ter influencia na memoria
-	PUSH R3 						; Guarda o valor atual do R3 sem ter influencia na memoria
-	PUSH R4 						; Guarda o valor atual do R4 sem ter influencia na memoria
-	PUSH R5 						; Guarda o valor atual do R5 sem ter influencia na memoria
-	PUSH R6 						; Guarda o valor atual do R6 sem ter influencia na memoria
-	PUSH R7 						; Guarda o valor atual do R7 sem ter influencia na memoria
-	MOV R0, ARG1					; Passa o valor do endereco do item para o R0
-	MOV R1, ARG2					; Passa o valor do endereco da quantidade de itens a comprar para o R1
-	MOV R2, 48						;
-	;MOV R2, Dinheiro_Inserido_Eur	; Passa o endereco da quantidade de Dinheiro inserido que seja igual a parte de Eurs
-	;MOV R3, Dinheiro_Inserido_Eur	; Passo o endereco da quantidade de Dinheiro inserido que seja igual a parte dos Cents
-	MOV R4, [R0]					; R4 vai possuir o endereco do Item 
-	MOV R5, 16						; R5 vai ser o valor necessario para nos sermos capazes de aceder ao preco do item relativamente ao Eurs
-	MOV R6, [R4+R5]					; R6 vai possuir o valor do preco do Item relativo a parte dos Eurs
-	SUB R6, R2						; Convertemos o valor de carater para um numero
-	MOV R5, 17						; R5 vai possuir o valor necessario para o sermos capazes de aceder ao preco do Item relativamente ao Cents
-	MOV R7, R4						; R7 vai possuir o endereco do Item como R4
-	ADD R7, R5						; R7 ao somarmos R5 ao R7 vamos possuir o endereco do preco do Item relativamente ao Cents
-	MOV [R0], R7					; A valor da memoria de R0 (ARG1) vai passar a possuir o valor de R7 (preco relativamente aos Cents)
-	CALLF ConverterNumero2B			; Chamamos a funcao para converter o valor de R7 para um Numero de 2 Bytes
-	MOV R7, [R0]					; R7 vai possuir agora o valor convertido da posicao da memoria de R0 resultante da funcao
+	PUSH R3							; Guarda o valor atual do R3 sem ter influencia na memoria
+	PUSH R4							; Guarda o valor atual do R4 sem ter influencia na memoria
+	PUSH R5							; Guarda o valor atual do R5 sem ter influencia na memoria
+	PUSH R6							; Guarda o valor atual do R6 sem ter influencia na memoria
+	PUSH R7							; Guarda o valor atual do R7 sem ter influencia na memoria
+	MOV R0, ARG1					; Guarda no R0 o valor que corresponde ao endereco do item que foi pedido
+	MOV R1, 16						; Guarda no R1 o valor que vai ser usado para chegarmos ao valor do preco do item
+	MOVB R2, [R0+R1]				; Guarda em R2 o valor do preco do item do item pedido
+	MOV R3, 48						; Guarda em R3 o valor da conversao o valor que estar em R2 que esta em ASCII para numerico em binario
+	SUB R2, R3						; O R2 agora possui oo valor do preco do item da parte Eur em valor numerico
+	MUL R2, 100						; Converte o valor do Euro para centimos
+	ADD R1,1						; R1 passa a ter o apontador necessario para acedermos ao valor dos centimos
+	MOVB R4, [R0+R1]				; R4 agr possui o valor do preco do item da parte dos centimos
+	SUB R4, R3						; R4 possui o valor da conversao dos centimos de ASCII para um valor numerico
+	ADD R2, R4						; Agr R2 vai possuir o preco total do itme com a adicao dos Eurs aos cents
+	MOV R5, Dinheiro_Inserido		; R5 vai possuir o endereco da memoria onde vai ter o valor do dinheiro inserido
+	MOV R6, [R5]					; R5 vai possuir o valor do dinheiro inseirdo
+	MOV R7, R2						; R7 vai possuir o valor de R2 para que R2 nao seja influenciado pela conta
+	SUB R7, R6						; Subtrai o Preco Total do Item pelo o dinheiro Inserido
+	JZ Pagamento_feito				; Se a subtracao do opreco total com o dinheiro inserido muda para rotina de pagamento feito com sucesso
+	JN Troco						; Se a conta der um valor negativo ele salta para a rotina do Troco
+	CALL Mostrar_ErrorDisp_Dinheiro	; Se o resultado da soma nao for 0 ou negativo vai mostrar um display em que nao foi inserido dinheiro sufeciente
+
+; Nesta Rotina ira mostrar o display de compra efetuada com sucesso e remover a quantidade no stock
+Pagamento_feito:
+	RET
+
+; Esta Rotina ira Calcular o troco (se sufeciente) do stock para devolver ao cliente caso nao haja sufeciente
+; Caso haja sufeciente ira mostrar um display de erro de que nao existe troco na maquina e ira cancelar a compra 
+Troco:
+	;Anything
+	RET
