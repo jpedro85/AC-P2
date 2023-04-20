@@ -84,7 +84,7 @@
 		STRING "00"					;Preco Cent
 		STRING ' '
 	
-	Stock_Bebibas :
+	Stock_Bebibas:
 		;Coca Cola 1
 		STRING "Coca Cola  "		;Nome
 		STRING "   56"				;Quantidade
@@ -179,6 +179,7 @@
 	Stock_Dineiro:
 		;Moedas 0.10
 		STRING "Moeda10Cent"		;Nome
+		Quantidade_Moedas_010:
 		STRING "   99"				;Quantidade
 		STRING '0'					;Preco Euros
 		STRING "10"					;Preco Cent
@@ -186,6 +187,7 @@
 		
 		;Moedas 0.20
 		STRING "Moeda20Cent"		;Nome
+		Quantidade_Moedas_020:
 		STRING "   50"				;Quantidade
 		STRING '0'					;Preco Euros
 		STRING "20"					;Preco Cent
@@ -193,6 +195,7 @@
 		
 		;Moedas 0.50
 		STRING "Moeda50Cent"		;Nome
+		Quantidade_Moedas_050:
 		STRING "   10"				;Quantidade
 		STRING '0'					;Preco Euros
 		STRING "50"					;Preco Cent
@@ -200,6 +203,7 @@
 		
 		;Moedas 1.00
 		STRING "Moeda 1Euro"		;Nome
+		Quantidade_Moedas_100:
 		STRING "   73"				;Quantidade
 		STRING '0'					;Preco Euros
 		STRING "00"					;Preco Cent
@@ -207,6 +211,7 @@
 		
 		;Moedas 2.00
 		STRING "Moeda 2Euro"		;Nome
+		Quantidade_Moedas_200:
 		STRING "   52"				;Quantidade
 		STRING '2'					;Preco Euros
 		STRING "00"					;Preco Cent
@@ -214,6 +219,7 @@
 		
 		;Moedas 5.00
 		STRING "Nota 5Euros"		;Nome
+		Quantidade_Notas_500:
 		STRING "   10"				;Quantidade
 		STRING '5'					;Preco Euros
 		STRING "00"					;Preco Cent
@@ -223,7 +229,7 @@
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;Display Main
 	Place 2000H					 ;primeira posicao
-	Display_Main :
+	Display_Main:
 		STRING "----------------";
 		STRING "MAQUINA DE VENDA";
 		STRING "   Bem Vindo    ";
@@ -234,7 +240,7 @@
 
 	;Display Produtos
 	Place 2080H	
-	Display_Categurias :
+	Display_Categurias:
 		STRING "----------------";
 		STRING "   CATEGURIAS   ";
 		STRING "----------------";
@@ -245,7 +251,7 @@
 
 	;Display Top Lanches
 	Place 2100H	
-	Display_Snaks :				 ;este e um parte do display as 4 proximas linhas sao preenchidas com base no array de lanches
+	Display_Snaks:				 ;este e um parte do display as 4 proximas linhas sao preenchidas com base no array de lanches
 		STRING "----LANCHES-----";
 		STRING "                "; vem do array
 		STRING "                "; vem do array
@@ -256,7 +262,7 @@
 
 	;Diplays Bebidas
 	Place 2180H	
-	Display_Bebidas : 			 ;este e um parte do display as 4 proximas linhas sao preenchidas com base no array de lanches
+	Display_Bebidas: 			 ;este e um parte do display as 4 proximas linhas sao preenchidas com base no array de lanches
 		STRING "----BEBIDAS-----";
 		STRING "                "; vem do array
 		STRING "                "; vem do array
@@ -267,7 +273,7 @@
 		
 	;Display intruduzir Quantidade
 	Place 2200H	
-	Display_Introduza_Quantidade : 
+	Display_Introduza_Quantidade: 
 		STRING "   Intruduza o  ";
 		STRING "numero de items:";
 		STRING "----------------";
@@ -278,7 +284,7 @@
 		
 	;Display confirmar Quantidade
 	Place 2280H	
-	Display_Confirmar_Quantidade : 
+	Display_Confirmar_Quantidade: 
 		STRING "   Confirma o   ";
 		STRING "numero inserido?";
 		STRING "----------------";
@@ -289,18 +295,18 @@
 		
 	;Display intuduza o dinheiro
 	Place 2300H	
-	Display_Introduza_Dinheiro : 
-		STRING "   Intruduza o  ";
-		STRING "numero de items:";
-		STRING "----------------";
-		STRING ">               ";
-		STRING "                ";
-		STRING "----------------";
-		STRING "0>Cancelar      ";
+	Display_Introduza_Dinheiro: 
+		STRING "---Intruduzir---";
+        STRING "2>0.10  | 5>1.00";
+        STRING "3>0.20  | 6>2.00";
+        STRING "4>0.50  | 7>5.00";
+        STRING "TOTAL:X         ";
+        STRING "1>Continuar     ";
+        STRING "0>Cancelar      ";
 		
 	;Display confirmar Dinheiro
 	Place 2380H	
-	Display_Confirmar_Dinheiro : 
+	Display_Confirmar_Dinheiro: 
 		STRING "   Confirma a   ";
 		STRING "numero inserido?";
 		STRING "----------------";
@@ -311,7 +317,7 @@
 		
 	;Display Opcoes
 	Place 2400H	
-	Display_Opcoes : 
+	Display_Opcoes: 
 		STRING "----------------";
 		STRING "     Opcoes     ";
 		STRING "----------------";
@@ -322,7 +328,7 @@
 		
 	;Display Stock
 	Place 2800H	
-	Display_Stock : 			 ;este e um parte do display as 4 proximas linhas sao preenchidas com base no array
+	Display_Stock: 			 ;este e um parte do display as 4 proximas linhas sao preenchidas com base no array
 		STRING "-----Stock------";
 		STRING "                "; vem do array
 		STRING "                "; vem do array
@@ -333,7 +339,7 @@
 	
 	;Display Inserir Senha
 	Place 2880H	
-	Display_InserirSenha : 
+	Display_InserirSenha: 
 		STRING "Introduza Senha ";
 		STRING "----------------"; 
 		STRING "                "; 
@@ -344,7 +350,7 @@
 		
 	;mostrado quando o escolhe opcoes
 	Place 2900H	
-	Display_OPN_Pages :
+	Display_OPN_Pages:
 		STRING "---- opcoes ----";
 		STRING "----------------";
 		STRING "3>Pg. Seguinte  ";
@@ -358,7 +364,7 @@
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;mostrado quando o utilizador insere um opcao negativa ou maior que o max
 	Place 2480H	
-	ERRORDisplay_OPN :
+	ERRORDisplay_OPN:
 		STRING " Valor Inserido ";
 		STRING "fora dos limites";
 		STRING "----------------";
@@ -369,7 +375,7 @@
 		
 	;quando o utilizador insere uma palavra pass enrrada
 	Place 2780H	
-	ERRORDisplay_Senha_Invalida :
+	ERRORDisplay_Senha_Invalida:
 		STRING "----------------";
 		STRING "----------------";
 		STRING "     Senha      ";
@@ -383,7 +389,7 @@
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;mostrado quando o utilizador insere uma moeda ou nota que a maquina nao aceita
 	Place 2500H	
-	ERRORDisplay_Dinehrio_DinheiroInvalido :
+	ERRORDisplay_Dinehrio_DinheiroInvalido:
 		STRING "  So Aceitamos  ";
 		STRING "----------------";
 		STRING "0.10| 0.20 |0.50";
@@ -405,7 +411,7 @@
 		
 	;mostrado quando o utilizador nao insere o dinheiro suficiente
 	Place 2600H	
-	ERRORDisplay_Dinehrio_Insuficiente:
+	ERRORDisplay_Dinheiro_Insuficiente:
 		STRING "----------------";
 		STRING "O valor inserido";
 		STRING "e insuficiente! ";
@@ -419,7 +425,7 @@
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;quando o utilizador insere uma quantidade superior a que tem em stock
 	Place 2680H	
-	ERRORDisplay_Stock_Insuficiente :
+	ERRORDisplay_Stock_Insuficiente:
 		STRING "    Em Stock    ";
 		STRING "----------------";
 		STRING "nome       XXXXX"; nome do produto e quantidade em stock
@@ -430,7 +436,7 @@
 
 	;quando o utilizador insere uma quantidade superior a que tem em stock
 	Place 2700H	
-	ERRORDisplay_Dinehrio_SemStock :
+	ERRORDisplay_Dinehrio_SemStock:
 		STRING "----------------";
 		STRING " A Maquina nao  ";
 		STRING "   tem Stock!   ";
@@ -485,7 +491,12 @@
 		ARG1: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
 		ARG2: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
 		ARG3: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
-				
+		
+		ARG4:			WORD 0					;
+		ARG5:			WORD 0					;
+		ARG6:			WORD 0					;
+
+
 		gggggst EQU 5000H;dsa
 		
 		PLACE 5010H
@@ -494,6 +505,12 @@
 			;    4D 40 71 32 21 56 65 23
 		Senha_END EQU 5018H
 
+		qt_5: 			WORD 0					; Quantidade de Notas de 5 que vamos usar do stock
+		qt_2: 			WORD 0					; Quantidade de moedas de 2 que vamos usar do stock
+		qt_1: 			WORD 0					; Quantidade de moedas de 1 que vamos usar do stock
+		qt_050:			WORD 0					; Quantidade de moedas de 050 que vamos usar do stock
+		qt_020:			WORD 0					; Quantidade de moedas de 020 que vamos usar do stock
+		qt_010:			WORD 0 					; Quantidade de moedas de 010 que vamos usar do stock
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;													Display
 	;--------------------------------------------------------------------------------------------------------------------------------
@@ -527,7 +544,7 @@ Begin:
 	
 	
 PLACE 0100H
-Main :								; programa principal
+Main:								; programa principal
 	MOV R0 , ARG1					; R0 fica com o valor do endereco do ARG1
 	MOV R1 , PER_EN_VALOR			; R1 fica com o endereco da varival para guardar o valor lido
 	MOV R2 , Display_Main
@@ -544,7 +561,7 @@ Main_CMP_2:
 	JEQ Main_CMP_2_True				; se nao for 2 salta para pedir outro valor de entrada
 	MOV R2 , 49						; R2 = 1
 	MOV [R0] , R2					; ARG1 fica 1
-	Call Mostrar_ErrorDisplay_OPTN	; Mostra o erro que a opn escolhida n e valida
+	CALL Mostrar_ErrorDisplay_OPTN	; Mostra o erro que a opn escolhida n e valida
 	JMP Main						; volta ao inicio
 Main_CMP_2_True:
 	CALL Mostrar_Produtos			; chama a rotina que mostra o ecra produtos
@@ -565,10 +582,10 @@ Mostrar_Stock:
 	PUSH R8
 	PUSH R9
 	MOV R7 , PER_EN_VALOR			; R7 = endereco da variavel que guarda o valor lido
-MS_NovaSenha :
+MS_NovaSenha:
 	MOV R1 , ARG1					; R1 = endereco do ARG1
-	Call PedirSenha_Senha			; Pede uma senha
-	CallF CompararSenha				; Valida a senha
+	CALL PedirSenha_Senha			; Pede uma senha
+	CALLF CompararSenha				; Valida a senha
 	MOV R0 , [R1]
 	CMP R0 , 1						; senha correta ?
 	JNZ MS_SenhaErrada				; se nao correta 
@@ -579,7 +596,7 @@ MS_completa_pg_indices1:			; o para comecar presisamos descobrir os enderecos do
 	MOV R4 , [R0]					; R4 = Atual_Page
 	MOV R5 , Size_Total
 	MOV [R1] , R5
-	CallF MaxPages
+	CALLF MaxPages
 	MOV R5 , [R1]					; R5 = max pages
 	CMP R4 , 0						; se Atual_Page <= 0 Atual_Page = max pg
 	JGT MS_completa_pg_indices2
@@ -616,7 +633,7 @@ MS_stock:
 	MOV R6 , Display_Stock			; R6 = endereco do Display_stock
 	MOV [R1] , R6					; ARG1 = Display_stock
 	CALLF Mostrar_Display			; Mostra o Display
-	Call LerInput					; espera um input
+	CALL LerInput					; espera um input
 	MOV R6 , [R7]					; R6 tem o input 
 	CMP R6 , 0
 	JZ MS_MostrarDisplayOPTN		; se igual a 0
@@ -627,7 +644,7 @@ MS_MostrarDisplayOPTN:
 	MOV R6 , Display_OPN_Pages
 	MOV [R1] , R6					; ARG1 = Display_OPN_Pages
 	CALLF Mostrar_Display			; mostra o display que esta em ARG1
-	Call LerInput					; 
+	CALL LerInput					; 
 	MOV R6 , [R7]					; R6 = input das OPTN
 	CMP R6 , 0						; cancelar
 	JEQ MS_stock
@@ -655,27 +672,27 @@ MS_OPTN2:
 MS_OPTN4:
 	MOV R6 , 3
 	MOV [R1] , R6					; ARG1 = 3
-	Call Mostrar_ErrorDisplay_OPTN
+	CALL Mostrar_ErrorDisplay_OPTN
 	JMP MS_MostrarDisplayOPTN
 MS_OPTN3:
-	Call Mostrar_ErrorDisplay_OPTN
+	CALL Mostrar_ErrorDisplay_OPTN
 	JMP MS_stock
 MS_SenhaErrada:
 	MOV R0 , ERRORDisplay_Senha_Invalida	; R0 = o endereco do Display senha invalida
 	MOV [R1] , R0							; ARG1 = o endereco do Display senha invalida
-	CallF Mostrar_Display					; Mostra o Display
-	Call LerInput
+	CALLF Mostrar_Display					; Mostra o Display
+	CALL LerInput
 	MOV R2 , PER_EN_VALOR
 	MOV R0 , [R2]
 	CMP R0 , 0
 	JNZ MS_CMP2
 	JMP MS_Fim
-MS_CMP2 :
+MS_CMP2:
 	CMP R0 , 1
 	JEQ MS_NovaSenha
 	MOV R0 , 49
 	MOV [R1] , R0
-	Call Mostrar_ErrorDisplay_OPTN
+	CALL Mostrar_ErrorDisplay_OPTN
 	JMP MS_SenhaErrada
 MS_Fim:
 	POP R9
@@ -1095,24 +1112,84 @@ CalcularTroco:
 	MOV R3, 48						; Guarda em R3 o valor da conversao o valor que estar em R2 que esta em ASCII para numerico em binario
 	SUB R2, R3						; O R2 agora possui oo valor do preco do item da parte Eur em valor numerico
 	MUL R2, 100						; Converte o valor do Euro para centimos
-	ADD R1,1						; R1 passa a ter o apontador necessario para acedermos ao valor dos centimos
+	ADD R1, 1						; R1 passa a ter o apontador necessario para acedermos ao valor dos centimos
 	MOVB R4, [R0+R1]				; R4 agr possui o valor do preco do item da parte dos centimos
 	SUB R4, R3						; R4 possui o valor da conversao dos centimos de ASCII para um valor numerico
-	ADD R2, R4						; Agr R2 vai possuir o preco total do itme com a adicao dos Eurs aos cents
+	ADD R2, R4						; Agr R2 vai possuir o preco total do item com a adicao dos Eurs aos cents
 	MOV R5, Dinheiro_Inserido		; R5 vai possuir o endereco da memoria onde vai ter o valor do dinheiro inserido
-	MOV R6, [R5]					; R5 vai possuir o valor do dinheiro inseirdo
+	MOV R6, [R5]					; R6 vai possuir o valor do dinheiro inseirdo
 	MOV R7, R2						; R7 vai possuir o valor de R2 para que R2 nao seja influenciado pela conta
-	SUB R7, R6						; Subtrai o Preco Total do Item pelo o dinheiro Inserido
-	JZ Pagamento_feito				; Se a subtracao do opreco total com o dinheiro inserido muda para rotina de pagamento feito com sucesso
-	JN Troco						; Se a conta der um valor negativo ele salta para a rotina do Troco
+	CMP R6,	R7						; Comparamos Preco Total do Item com o Dinheiro inserido
+	JGE Troco 						; 
 	CALL Mostrar_ErrorDisp_Dinheiro	; Se o resultado da soma nao for 0 ou negativo vai mostrar um display em que nao foi inserido dinheiro sufeciente
 
-; Nesta Rotina ira mostrar o display de compra efetuada com sucesso e remover a quantidade no stock
-Pagamento_feito:
+; Esta Rotina ira Calcular o troco (se suficiente) do stock para devolver ao cliente caso nao haja suficiente
+; Caso haja suficiente ira mostrar um display de erro de que nao existe troco na maquina e ira cancelar a compra
+; R7 agr e o resultado de troco a dar se possivel
+Troco:
+	SUB R7, R6						; Subtrai o Preco Total do Item pelo o Dinheiro Inserido
+	PUSH R0							;
+	PUSH R1							;
+	PUSH R2							;
+	PUSH R3							;
+	PUSH R4							;
+	MOV R0, Quantidade_Notas_500	; R0 tem o endereco da quantidade de stock de notas de 5
+	MOV R1,[R0]						; R1 tem o o valor da quantidade de stock
+	CALL While						; Executa o While Loop
+	; Guardamos a quantidade de Notas e verificamos
+	MOV R4, qt_5					; R4 tem o endereco da quantidade de Notas de 5
+	MOV [R4], R2					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
+	MOV R0,Quantidade_Moedas_200	; R0 tem o endereco da quantidade de stock de moedas de 2
+	MOV R1,[R0]						; R1 tem o o valor da quantidade de stock
+	CALL While						; Executa o While Loop
+	; Guardamos a quantidade de moedas e verificamos
+	MOV R4, qt_2					; R4 tem o endereco da quantidade de moedas de 2
+	MOV [R4], R2					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
+	MOV R0, Quantidade_Moedas_100	; R0 tem o endereco da quantidade de stock de moedas de 1
+	MOV R1,[R0]						; R1 tem o o valor da quantidade de stock
+	CALL While						; Executa o While Loop
+	; Guardamos a quantidade de moedas e verificamos
+	MOV R4, qt_1					; R4 tem o endereco da quantidade de moedas de 1
+	MOV [R4], R2					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
+	MOV R0, Quantidade_Moedas_050	; R0 tem o endereco da quantidade de stock de moedas de 050
+	MOV R1,[R0]						; R1 tem o o valor da quantidade de stock
+	CALL While						; Executa o While Loop
+	; Guardamos a quantidade de moedas e verificamos
+	MOV R4, qt_050					; R4 tem o endereco da quantidade de moedas de 050
+	MOV [R4], R2					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
+	MOV R0, Quantidade_Moedas_020	; R0 tem o endereco da quantidade de stock de moedas de 020
+	MOV R1,[R0]						; R1 tem o o valor da quantidade de stock
+	CALL While						; Executa o While Loop
+	; Guardamos a quantidade de moedas e verificamos
+	MOV R4, qt_020					; R4 tem o endereco da quantidade de moedas de 020
+	MOV [R4], R2					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
+	MOV R0, Quantidade_Moedas_020	; R0 tem o endereco da quantidade de stock de moedas de 020
+	MOV R1,[R0]						; R1 tem o o valor da quantidade de stock
+	CALL While						; Executa o While Loop
+	; Guardamos a quantidade de moedas e verificamos
+	MOV R4, qt_010					; R4 tem o endereco da quantidade de moedas de 010
+	MOV [R4], R2					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
+	; Verificacao se troco a pagar e igual a zero
+	CMP R7, 0						; Verificacao se troco a pagar e igual a zero
+	JNE Mostrar_ErrorDisp_Dinheiro	; Caso Falso Ira mostrar o display de Falta de Troco
+	JMP	Pagamento_Feito				; Salta para a rotina em que o pagamento foi executado com sucesso
+
+; R2 Quantidade
+; R3 valor monetario que vamos fazer a verificacao
+While:
+	CMP R1, R2						; Stock > quantidade que estamos a usar
+	JLT	End							; Caso falso termina
+	CMP R7,R3						; Troco a pagar > 500
+	JLT End							; Caso falso termina
+	SUB R7,R3						; Troco a pagar -500
+	ADD R2,1						; Quantidade do valor monetario +1
+	JMP While						; Executa o while denovo
+End:
 	RET
 
-; Esta Rotina ira Calcular o troco (se sufeciente) do stock para devolver ao cliente caso nao haja sufeciente
-; Caso haja sufeciente ira mostrar um display de erro de que nao existe troco na maquina e ira cancelar a compra 
-Troco:
-	;Anything
-	RET
+; Esta rotina ira servir para mostrar um display de erro em que o cliente nao inseriu dinheiro suficiente para efetuar a compra
+Mostrar_ErrorDisp_Dinheiro:
+	MOV R0, ARG1					;
+	MOV R1, ERRORDisplay_Dinheiro_Insuficiente;
+	MOV	[R0], R1					;
+	CALLF Mostrar_Display			;
