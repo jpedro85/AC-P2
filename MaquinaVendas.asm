@@ -143,7 +143,7 @@
 
 		;Cofe free 9
 		STRING "Cofe free  "		;Nome
-		STRING "    91"				;Quantidade
+		STRING "   91"				;Quantidade
 		STRING '1'					;Preco Euros
 		STRING "00"					;Preco Cent
 		STRING ' '
@@ -238,8 +238,8 @@
 		STRING "----------------";
 		STRING "   CATEGURIAS   ";
 		STRING "----------------";
-		STRING "2>LANCHES       ";
-		STRING "1>BEBIDAS       ";
+		STRING "2>Lanches       ";
+		STRING "1>Bebidas       ";
 		STRING "----------------";
 		STRING "0>Voltar        ";
 
@@ -251,7 +251,7 @@
 		STRING "                "; vem do array
 		STRING "                "; vem do array
 		STRING "                "; vem do array
-		STRING "------X/Y-------";
+		STRING "Pg  X /Y        ";
 		STRING "0>Opcoes        ";
 
 	;Diplays Bebidas
@@ -262,7 +262,7 @@
 		STRING "                "; vem do array
 		STRING "                "; vem do array
 		STRING "                "; vem do array
-		STRING "------X/Y-------";
+		STRING "Pg  X /Y        ";
 		STRING "0>Opcoes        ";
 		
 	;Display intruduzir Quantidade
@@ -290,12 +290,12 @@
 	;Display intuduza o dinheiro
 	Place 2300H	
 	Display_Introduza_Dinheiro : 
-		STRING "   Intruduza o  ";
-		STRING "numero de items:";
-		STRING "----------------";
-		STRING ">               ";
-		STRING "                ";
-		STRING "----------------";
+		STRING "---Intruduzir---";
+		STRING "2>0.10  | 5>1.00";
+		STRING "3>0.20  | 6>2.00";
+		STRING "4>0.50  | 7>5.00";
+		STRING "TOTAL:X         ";
+		STRING "1>Continuar     ";
 		STRING "0>Cancelar      ";
 		
 	;Display confirmar Dinheiro
@@ -413,7 +413,7 @@
 		STRING "                ";
 		STRING "1>Tentar de novo";
 		STRING "0>Cancelar      ";
-		
+
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;													Displays De Erros de Stock
 	;--------------------------------------------------------------------------------------------------------------------------------
@@ -448,12 +448,20 @@
 		Stock_X						EQU 2854H ; posisao do x
 		Stock_Y						EQU 2857H ; posisao do y
 		Stock_END 					EQU 3245H ; ultimo elemento do array
+		
+		Byte1_Linha1_Lanches		EQU 2110H ; 2100H + 16 (primeiro da segunda linha)
+		Lanches_X					EQU 2855H ; posisao do x
+		
+		Byte1_Linha1_Bebidas		EQU 2190H ; 2180H + 16 (primeiro da segunda linha)
+		Bebidas_X					EQU 21D4H ; posisao do x
+		
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;													Constantes
 	;--------------------------------------------------------------------------------------------------------------------------------
 		
 		CaraterVazio 				EQU 20H	; valor do espaco
 		CaraterAsterisco			EQU 2AH	; valor do *
+		CaraterPonto				EQU 2EH	; valor do .
 		Size_Display 				EQU 112	; Tamnho do Display em Bytes 112B 70H
 		Size_DisplayLine 			EQU 16	; Tamnho do da linha em Bytes 16B 10H
 
@@ -484,6 +492,9 @@
 		ARG1: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
 		ARG2: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
 		ARG3: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
+		ARG4: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
+		ARG5: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
+		ARG6: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
 				
 		gggggst EQU 5000H;dsa
 		
@@ -566,6 +577,7 @@ Mostrar_Stock:
 	MOV R7 , PER_EN_VALOR			; R7 = endereco da variavel que guarda o valor lido
 MS_NovaSenha :
 	MOV R1 , ARG1					; R1 = endereco do ARG1
+	;MOV R3 , [R1]					; R3 = Size Total
 	Call PedirSenha_Senha			; Pede uma senha
 	CallF CompararSenha				; Valida a senha
 	MOV R0 , [R1]
@@ -574,25 +586,13 @@ MS_NovaSenha :
 	MOV R0 , Atual_Page				; R0 = endereco da cariavel Atual_Page
 	MOV R2 , 1						;
 	MOV [R0] , R2					; Atual_Page = 1 nao existe pg 0
-MS_completa_pg_indices1:			; o para comecar presisamos descobrir os enderecos do primeiro e do ultimo item que vai ser mostrado
-	MOV R4 , [R0]					; R4 = Atual_Page
-	MOV R5 , Size_Total
-	MOV [R1] , R5
-	CallF MaxPages
-	MOV R5 , [R1]					; R5 = max pages
-	CMP R4 , 0						; se Atual_Page <= 0 Atual_Page = max pg
-	JGT MS_completa_pg_indices2
-	MOV [R0] ,R5
-	JMP MS_completa_pg_indices1
-MS_completa_pg_indices2:
-	CMP R4 , R5						; se Atual_Page > MAX Atual_Page = 1
-	JLE MS_completa_pg_indices3
-	MOV R5 , 1
-	MOV [R0] ,R5
-	JMP MS_completa_pg_indices1
-MS_completa_pg_indices3:			; se Atual page for valido >= 1 e <= max
+MS_completa_pg_indices1:
+	MOV R3 , Size_Total				; R3 = Size Total
+	MOV [R1] , R3					; ARG1 = Size Total
+	CALL Calcular_paginaAtual
+	MOV R4 , [R0]					; AtualPage
 	MOV R2 , Size_Stockitem
-	MOV R9 , 4						; R8 = numero de linhas
+	MOV R9 , 4						; R9 = numero de linhas
 	MUL R9 , R2						; intervalo em Bytes entre o primeiro byte a ser escrito e o ultimo por pagina
 	MOV R2 , R4						
 	SUB R2 , 1						; begin pg anterior * 4 linhas 
@@ -609,7 +609,7 @@ MS_completa_pg_indices3:			; se Atual page for valido >= 1 e <= max
 	MOV R2 , R9
 MS_cont:
 	MOV R8 , ARG2
-	MOV [R8] , R2					; ARG1 endereco do ultimo
+	MOV [R8] , R2					; ARG2 endereco do ultimo
 	CALL CompletarPagina_Stock		; Completa a pg stock com as linhas
 MS_stock:
 	MOV R6 , Display_Stock			; R6 = endereco do Display_stock
@@ -689,11 +689,181 @@ MS_Fim:
 	POP R0							; busca o valor atual de R0 inicial
 	RET
 
-
+Mostrar_Produtos:
+	PUSH R0 
+	PUSH R1
+	PUSH R2
+	PUSH R3
+	MOV R1 , ARG1					; R1 = endereco de ARG1
+	MOV R0 , Display_Categurias		; R0 = endereco do Display_Categurias
+MP_MostrarDisplay:
+	MOV [R1] , R0					; ARG1 = Display_Categurias
+	MOV R2 , PER_EN_VALOR			; R2 = endereco da variavel que guarda o input
+	CALLF Mostrar_Display			; Mostra o Display
+	CALL LerInput					; le o input
+	MOV R3 ,[R2]					; R3 = input
+	CMP R3 , 0						; input = 0 ?
+	JZ MP_MostrarDisplay_Fim		; se sim salta para o fim, retornar ao main
+	CMP R3 , 1						; input = 1 ?
+	JNZ MP_MostrarDisplay_CP2		; se nao salta para a prossima comparacao
+	CALL MenuBebidas				; Mostra o menu das bebidas
+	CALL LerInput	
+	JMP MP_MostrarDisplay
+MP_MostrarDisplay_CP2:
+	CMP R3 , 2						; input = 2 ?
+	JNZ MP_MostrarDisplay_CP3		; se nao , entao o input e invalido
+	CALL MenuLanches				
+	CALL LerInput	
+	JMP MP_MostrarDisplay
+MP_MostrarDisplay_CP3:
+	CALL Mostrar_ErrorDisplay_OPTN
+	JMP MP_MostrarDisplay
+MP_MostrarDisplay_Fim:
+	POP R3
+	POP R2
+	POP R1
+	POP R0
+	RET
+	
+MenuBebidas:
 
 	
-Mostrar_Produtos:
+;Usada calcular primeiro e ultimo enderecos chamar o completar pagina
+;ARG1 = Size Total 
+;ARG2 = Artay Begin 
+;ARG3 = Array End 
+;ARG4 = Rotina de completar linha 
+;ARG5 = 1 linha a escrever 
+;ARG6 = endereco do x 
+
+	MOV R1 , ARG1
+	MOV R0 , Size_Bebidas
+	MOV [R1] , R0					; ARG1 = size_Bebidas
+	MOV R2 , ARG2
+	MOV R0 , Stock_Bebibas
+	MOV [R2] , R0					; ARG2 = Inicio do Stock_bebidas
+	MOV R2 , ARG3
+	MOV R0 , Stock_Dineiro			;
+	MOV [R2] , R0					; ARG3 = fim do Stock_Beidas
+	MOV R2 , ARG4
+	MOV R0 , CompletarPagina_NomePreco
+	MOV [R2] , R0					; ARG4 = rotina para completar a pagina
+	MOV R2 , ARG5
+	MOV R0 , Byte1_Linha1_Bebidas
+	MOV [R2] , R0					; ARG5 = Byte1_Linha1_Bebidas
+	MOV R2 , ARG6
+	MOV R0 , Bebidas_X
+	MOV [R2] , R0					; ARG6 = Bebidas_X
+	MOV R2 , Atual_Page
+	MOV R0 , 1
+	MOV [R2] , R0					; AtualPage = 1
+	CALL Completar_pagina			; como a rotina ARG4 tem como resultado em ARG1 o numero de escritos 
+	
+	CALL LerInput	
 	RET
+	
+	
+	
+MenuLanches:
+	PUSH R1
+	PUSH R2
+
+	MOV R1 , ARG1
+	MOV R2 , Stock
+	MOV [R1] , R2
+	
+	MOV R1 , ARG2
+	MOV R2 , Byte1_Linha1_Lanches
+	MOV [R1] , R2
+	
+	MOV R1 , ARG3
+	MOV R2 , 1
+	MOV [R1] , R2
+	CALLF Completar_Linha_NomePreco
+	
+	POP R2
+	POP R1
+	ret
+
+;Usada calcular primeiro e ultimo enderecos chamar o completar pagina
+;ARG1 = Size Total
+;ARG2 = Artay Begin
+;ARG3 = Array End
+;ARG4 = Rotina de completar pagina
+;ARG5 = 1 linha a escrever
+;ARG6 = endereco do x
+
+;result : 
+;ARG2 = endereco do primeiro 
+;ARG3 = endereco do ultimo 
+;ARG1 = numero de escritos se ARG4 tem como resultado o numero de escritos
+Completar_pagina:
+	PUSH R0							; guarda o valor atual de R0
+	PUSH R1							; guarda o valor atual de R1
+	PUSH R2							; ...
+	PUSH R3		
+	PUSH R4
+	PUSH R5							; guarda o valor atual de R5
+	PUSH R6
+	PUSH R7
+	PUSH R8
+	PUSH R9
+	MOV R1 , ARG1					; R1 = endereco do ARG1
+	MOV R2 , [R1]					; R2 = Size Total
+	MOV R0 , ARG5
+	MOV R6 , [R0]					; R6 = 1 linha a escrever
+	MOV [R0] , R2					; ARG5 = Size
+	MOV R0 , Atual_Page				; R0 = endereco da variavel Atual_Page
+	CALL Calcular_paginaAtual		; 
+	MOV R4 , [R0]					; AtualPage								; se Atual page for valido >= 1 e <= max
+	MOV R2 , Size_Stockitem
+	MOV R9 , 4						; R9 = numero de linhas
+	MUL R9 , R2						; R9 = intervalo em Bytes entre o primeiro byte a ser escrito e o ultimo por pagina
+	MOV R2 , R4						
+	SUB R2 , 1						
+	MUL R2 , R9						; begin pg anterior * entervalo em bytes por pg
+	MOV R3 , ARG2					
+	MOV R8 , [R3]					; R8 = Array Begin
+	ADD R2 , R8						; R2 = endereco do primeiro 
+	MOV [R1] , R2					; ARG1 endereco do primeiro
+	MOV R7 , R2						; R7 = endereco do primeiro
+	MOV R2 , R4
+	MUL R2 , R9						; last = pg atual * entervalo em bytes por pg 
+	ADD R2 , R8 					; R2 = ultimo endereco
+	MOV R3 , ARG3					
+	MOV R9 , [R3]					; R9 = Array END
+	CMP R2 , R9						; complarar se o ultimo endereco é maior que o array
+	JLE MS_cont2 
+	MOV R2 , R9						; se o ultimo maior que o array R2 = ultimo do array
+MS_cont2:
+	MOV R0 , ARG4
+	MOV R1 , [R0]					; R1 = endereco da funcao para completar a pg
+	MOV R3 , ARG2					; R3 = endereco do ARG2
+	MOV [R3] , R2					; ARG2 = ultimo endereco a ser escrito
+;	MOV R3 , ARG5					; R3 = endereco do ARG5
+;	MOV R4 , [R3]					; R4 = endereco da primeira linha a escrever\
+	MOV R3 , ARG3
+	MOV [R3] , R6					; ARG3 = endereco da primeira linha a escrever
+	MOV R3 , ARG6					; R3 = endereco do ARG6
+	MOV R4 , [R3]					; R4 = endereco do x
+	MOV [R0] , R4					; ARG4 = endereco do x
+	CALL R1							; call funcao completar pagina stock ou NomePreco	
+	MOV R1 , ARG2
+	MOV [R1] , R7					; ARG2 = endereco do primeiro
+	MOV R1 , ARG3
+	MOV [R1] , R2					; ARG3 = endereco do ultimo
+	POP R9 							; busca o valor atual de R2 inicial
+	POP R8 							; busca o valor atual de R2 inicial
+	POP R7							; busca o valor atual de R1 inicial
+	POP R6							; busca o valor atual de R0 inicial
+	POP R5 							; busca o valor atual de R2 inicial
+	POP R4							; busca o valor atual de R1 inicial
+	POP R3							; busca o valor atual de R0 inicial
+	POP R2 							; busca o valor atual de R2 inicial
+	POP R1							; busca o valor atual de R1 inicial
+	POP R0							; busca o valor atual de R0 inicial
+	RET
+	
 ;--------------------------------------------------------------------------------------------------------------------------------
 ;											Rotinas dos perifericos 
 ;--------------------------------------------------------------------------------------------------------------------------------
@@ -820,7 +990,72 @@ Limpar_Display_Ciclo:
 	POP R1
 	POP R0
 	RETF							; retorna
-	
+
+;Rotina para completar a pagina Display_Lanches ou Display_Bebidas 
+;ARG1 = Primeiro endereco elemento a ser escrito 
+;ARG2 = ultimo endereco 
+;ARG3 = 1 endereco da primeira linha a escrever 
+;ARG4 = endereco do X na pagina
+;ARG5 = Size total
+;result ARG1 = Numero de linhas escritas
+CompletarPagina_NomePreco:
+	PUSH R0							; guarda o valor de R0
+	PUSH R1							; guarda o valor de R1
+	PUSH R2							; ...
+	PUSH R3
+	PUSH R4
+	PUSH R5
+	PUSH R6
+	PUSH R7
+	PUSH R8
+	PUSH R9							; guarda o valor de R9
+	MOV R1 , ARG1 					; R1 fica com o endereco do ARG1
+	MOV R0 , [R1]					; R0 fica com o valor do ARG1
+	MOV R2 , ARG2					; R3 fica com o endereco do ARG2
+	MOV R5 , [R2]					; R5 fica com o valor de ARG2 ultimo elemento endereco
+	MOV R8 , Atual_Page				; R8 = AtualPage
+	MOV R9 , [R8]
+	MOV [R1] , R9					; ARG1 = Atual Page = numero a colocar
+	MOV R3 , ARG4					; R3 = Endereco do ARG4, 
+	MOV R4 , [R3]					; R4 = Val de ARG4
+	MOV [R2] , R4					; ARG2 fica com o endereco de onde colocar o numero
+	CALLF ColocarNumero2B
+	MOV R9 , ARG5
+	MOV R9 , [R9]					; 
+	MOV [R1] , R9 					
+	CALLF MaxPages					; ARG1 = total pages
+	ADD R4 , 3						; R4 = endereco do Y na pagina
+	MOV [R2] , R4					; ARG2 fica com o endereco de onde colocar o numero
+	CALLF ColocarNumero2B
+	MOV R3 , ARG3					; R3 = endereco do ARG3
+	MOV R4 , [R3]						; R4 fica com o endereco do 1 byte da 1 linha vazia do stock 
+	MOV R7 , Size_Stockitem			; R3 fica com o tamanho do item
+	MOV R6 , 1						; primeira OPTN disponivel = 1 (0 = opcoes)
+	MOV R8 , 16 					; tamaho da linha
+CPagina_NomePreco_Ciclo:
+	CMP R0 , R5						; compara o R0 (primeiro elemento / atual) com R5 (ultimo elemento)
+	JGE	CPagina_NomePrecoCiclo		; se o atual maior que o ultimo termina
+	MOV [R3] , R6					; ARG3 = OPTN do item 
+	MOV [R2] , R4					; ARG2 = Linha a escrever
+	MOV [R1] , R0					; ARG1 = Item
+	CallF Completar_Linha_NomePreco ; ARG1 = Endereco do Item ARG2 = Linha a Escrever posisao inicial ARG3 = numero do item
+	ADD R6 , 1						; contador++
+	ADD R4 , R8						; avanca para a linha seguinte
+	ADD R0 , R7						; avanca R0 para o item seguinte
+	JMP CPagina_NomePreco_Ciclo		; volta a completar mais uma linha
+CPagina_NomePrecoCiclo:
+	MOV [R1] , R6					; ARG1 fica com o max OPTN 
+	POP R9							; busca o valor de R9
+	POP R8							; busca o valor de R8
+	POP R7							; ...
+	POP R6
+	POP R5
+	POP R4
+	POP R3
+	POP R2
+	POP R1
+	POP R0							; busca o valor de R0
+	RET
 	
 ;Rotina para completar a pagina Display_stock  ARG1 = Primeiro endereco elemento a ser escrito ARG2 = ultimo endereco result ARG1 = Numero de linhas escritas
 CompletarPagina_Stock:
@@ -836,13 +1071,7 @@ CompletarPagina_Stock:
 	PUSH R9							; guarda o valor de R9
 	MOV R1 , ARG1 					; R1 fica com o endereco do ARG1
 	MOV R0 , [R1]					; R0 fica com o valor do ARG1
-	MOV R2 , ARG2					; R3 fica com o endereco do ARG2
-	MOV R4 , Stock					; R4 fica como endereco do stock
-	MOV R5 , R0						; Copia o R0 para p R5
-	SUB R5 , R4						; R5 = intervalo entre o inicio do array e o primeiro elemento a ser escrito
-	MOV R4 , Size_Stockitem			; R4 = tamaho do item
-	DIV R5 , R4						; R5 = indice do item
-	MOV [R1] , R5					; ARG1 fica com o indice do primeiro elemento
+	MOV R2 , ARG2					; R3 fica com o endereco do ARG2	
 	MOV R5 , [R2]					; R5 fica com o valor de ARG2 ultimo elemento endereco
 	MOV R7 , R5						; copia o valor de R5 para R7
 	MOV R8 , Atual_Page
@@ -857,7 +1086,7 @@ CompletarPagina_Stock:
 	MOV R4 , Stock_Y
 	MOV [R2] , R4	
 	CALLF ColocarNumero2B
-	MOV R4 , Byte1_Linha1_Stock		; R4 fica com o valor do 1 byte da 1 linha vazia do stock 
+	MOV R4 , Byte1_Linha1_Stock		; R4 fica com o endereco do 1 byte da 1 linha vazia do stock 
 	MOV R3 , Size_Stockitem			; R3 fica com o tamanho do item
 	MOV R6 , 0						; contador  = 0
 CompletarPagina_Ciclo:
@@ -881,7 +1110,61 @@ CompletarPagina_FimCiclo:
 	POP R0							; busca o valor de R0
 	RET
 
-;rotina usada para escrever o nome e ea quantidade numa linha :R0 = item R4 = linha resul R4 = aponta para a prosima linha
+; ARG1 = Endereco do Item ARG2 = Linha a Escrever posisao inicial ARG3 = numero do item
+Completar_Linha_NomePreco:
+	PUSH R0							; busca o valor de R0
+	PUSH R1	
+	PUSH R2
+	PUSH R3
+	PUSH R4
+	PUSH R5
+	PUSH R6
+	PUSH R7							; ...
+	MOV R1 , ARG1 					; R1 = endereco do ARG1
+	MOV R0 , [R1]					; R0 = ARG1
+	MOV R2 , ARG2 					; R1 = endereco do ARG2
+	MOV R3 , [R2]					; R0 = ARG2
+	MOV R6 , 11
+	ADD R6 , R3						; R6 = ultima posissao da linha
+	MOV R1 , ARG3 					; R1 = endereco do ARG2
+	MOV R5 , [R1]					; R5 = ARG3
+	MOV R7 , 48
+	ADD R5 , R7
+	MOVB [R3] , R5					; escreve o numero
+	ADD R3 , 1						; avanca um byte
+	CLNomePreco_CicloNome:	
+	MOVB R7 , [R0]					; 
+	MOVB [R3] , R7					; Copia [R0] para [R3]
+	ADD R0 , 1						; avanca carater no item em 1 byte
+	ADD R3 , 1						; avanca carater na linha em 1 byte
+	CMP R3 , R6						; verificar se escrevemos os 11 carateres
+	JLE	CLNomePreco_CicloNome		; se nao chegamos ao final escrever mais um par byte 
+	MOV R6 , Size_Stockitem_Quantidade
+	ADD R0 , R6						; R0 está agora a apontar para o euros
+	MOVB R7 , [R0]					
+	MOVB [R3] , R7					; Copia os euros [R0] para [R3]
+	MOV R6 , CaraterPonto
+	ADD R3 , 1
+	ADD R0 , 1						; R0 = centimos
+	MOVB [R3] , R6					; escreve um ponto depois dos euros
+	ADD R3 , 1
+	MOVB R7 , [R0]
+	MOVB [R3] , R7					; escreve mais um centimo
+	ADD R0 , 1
+	ADD R3 , 1				
+	MOVB R7 , [R0]	
+	MOVB [R3] , R7					; escreve mais um centimo
+	POP R7							; ...
+	POP R6
+	POP R5
+	POP R4
+	POP R3
+	POP R2
+	POP R1
+	POP R0							; busca o valor de R0
+	RETF							; retorna
+	
+;rotina usada para escrever o nome e a quantidade numa linha :R0 = item R4 = linha resul R4 = aponta para a prosima linha
 Completar_Linha_Stock:
 	PUSH R1							; guarda o valor de R1
 	MOV R1 , R0
@@ -942,22 +1225,14 @@ Mostrar_ErrorDisplay_OPTN:
 	CALLF Mostrar_Display			; Call mostrar a pagia 
 Mostrar_ErrorDisplay_OPTN_Ler:
 	CALL LerInput					; Call ler input 
-;	MOV R2 , PER_EN_VALOR			; R2 fica com o endereco da variavel Per_En_Valor
-;	MOV R1 , [R2]					; R1 fica com o valor da variavel Per_En_Valor
-;	CMP R1 , 0 						; compara R1 com 0 	
-;	JEQ	Mostrar_ErrorDisplay_OPTN_Fim	; se for igual a 0 salta para o fim
-;	JMP Mostrar_ErrorDisplay_OPTN_Ler	; se nao for igual a 0 pede ourto valor
-;Mostrar_ErrorDisplay_OPTN_Fim:	
 	POP R2 							; busca o valor atual de R2 inicial
 	POP R1							; busca o valor atual de R1 inicial
 	POP R0							; busca o valor atual de R0 inicial
 	RET								; termina a rotina
 	
-	
 ;--------------------------------------------------------------------------------------------------------------------------------
 ;											Rotinas Auxiliares
 ;--------------------------------------------------------------------------------------------------------------------------------
-
 ; rotina usada para ARG1 = valor a colocar ARG2 = endereco de onde colocar
 ColocarNumero2B:
 	PUSH R0							; guarda o valor atual de R0
@@ -1002,7 +1277,7 @@ ColocarNumero2B_Fim:
 	POP R0							; busca o valor atual de R0
 	RETF
 
-;rotina usada para converter 2 bytes  (1 das dezenas e outro das unidades) numnumero so ARG1 = posisao Result ARG1 = numero
+;rotina usada para converter 2 bytes  (1 das dezenas e outro das unidades) num numero  ARG1 = posisao Result ARG1 = numero
 ConverterNumero2B:
 	PUSH R0							; guarda o valor atual de R0
 	PUSH R1 						; guarda o valor atual de R1
@@ -1074,4 +1349,31 @@ CompararSenha_Fim:
 	POP R1							; busca o valor atual de R1 inicial
 	POP R0							; busca o valor atual de R0 inicial
 	RETF							; termina a rotina
-	
+
+; usado para determonar a pagina atual 
+; ARG1 Size total
+Calcular_paginaAtual:
+	PUSH R0							; guarda o valor atual de R0
+	PUSH R1							; guarda o valor atual de R1
+	PUSH R3		
+	PUSH R4
+	MOV R0 , Atual_Page				; R0 = endereco da cariavel Atual_Page
+	MOV R1 , ARG1					; R1 = endereco de ARG1  
+	MOV R3 , [R0]					; R4 = Atual_Page
+	CallF MaxPages					; ARG1 = max Pages
+	MOV R4 , [R1]					; R4 = max pages
+	CMP R3 , 0						; se Atual_Page <= 0 Atual_Page = max pg
+	JGT CL_2
+	MOV [R0] ,R4
+	JMP CL_3
+CL_2:
+	CMP R3 , R4						; se Atual_Page > MAX Atual_Page = 1
+	JLE CL_3
+	MOV R4 , 1
+	MOV [R0] , R4
+CL_3:								; se Atual page for valido >= 1 e <= max
+	POP R4
+	POP R3
+	POP R1
+	POP R0
+	RET
