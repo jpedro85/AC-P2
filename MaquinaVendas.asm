@@ -290,7 +290,7 @@
 	;Display intuduza o dinheiro
 	Place 2300H	
 	Display_Introduza_Dinheiro : 
-		STRING "---Intruduzir---";
+		STRING "CONTA:          ";
 		STRING "2>0.10  | 5>1.00";
 		STRING "3>0.20  | 6>2.00";
 		STRING "4>0.50  | 7>5.00";
@@ -1750,4 +1750,3 @@ Colocar_preco:
 	POP R1
 	POP R0
 	RETF
-	
