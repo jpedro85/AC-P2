@@ -499,10 +499,11 @@
 		gggggst EQU 5000H;dsa
 		
 		PLACE 5010H
-		Senha : 								;variavel guarda a senha do stock
+		Senha : 								; variavel guarda a senha do stock
 			STRING "M@q2!Ve#"
 			;    4D 40 71 32 21 56 65 23
 		Senha_END EQU 5018H
+		ITEM_A_COMPRAR:	WORD 0					; variavel para guardar o item a comprar
 
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;													Display
@@ -552,7 +553,7 @@ Main :								; programa principal
 Main_CMP_2:
 	CMP R2 , 1						; compara R0 com 2
 	JEQ Main_CMP_2_True				; se nao for 2 salta para pedir outro valor de entrada
-	MOV R2 , 49						; R2 = 1
+	MOV R2 , 1						; R2 = 1
 	MOV [R0] , R2					; ARG1 fica 1
 	Call Mostrar_ErrorDisplay_OPTN	; Mostra o erro que a opn escolhida n e valida
 	JMP Main						; volta ao inicio
@@ -626,7 +627,7 @@ MS_MostrarDisplayOPTN:
 	MOV R6 , Display_OPN_Pages
 	MOV [R1] , R6					; ARG1 = Display_OPN_Pages
 	CALLF Mostrar_Display			; mostra o display que esta em ARG1
-	Call LerInput					; 
+	CALL LerInput					; 
 	MOV R6 , [R7]					; R6 = input das OPTN
 	CMP R6 , 0						; cancelar
 	JEQ MS_stock
@@ -672,7 +673,7 @@ MS_SenhaErrada:
 MS_CMP2 :
 	CMP R0 , 1
 	JEQ MS_NovaSenha
-	MOV R0 , 49
+	MOV R0 , 1
 	MOV [R1] , R0
 	Call Mostrar_ErrorDisplay_OPTN
 	JMP MS_SenhaErrada
@@ -716,6 +717,8 @@ MP_MostrarDisplay_CP2:
 	CALL LerInput	
 	JMP MP_MostrarDisplay
 MP_MostrarDisplay_CP3:
+	MOV R3 , 2
+	MOV [R1] , R3					; ARG1 = 2
 	CALL Mostrar_ErrorDisplay_OPTN
 	JMP MP_MostrarDisplay
 MP_MostrarDisplay_Fim:
@@ -726,16 +729,17 @@ MP_MostrarDisplay_Fim:
 	RET
 	
 MenuBebidas:
-
-	
-;Usada calcular primeiro e ultimo enderecos chamar o completar pagina
-;ARG1 = Size Total 
-;ARG2 = Artay Begin 
-;ARG3 = Array End 
-;ARG4 = Rotina de completar linha 
-;ARG5 = 1 linha a escrever 
-;ARG6 = endereco do x 
-
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	PUSH R3
+	PUSH R4
+	PUSH R5
+	PUSH R6
+	MOV R3 , Atual_Page
+	MOV R0 , 1
+	MOV [R3] , R0					; AtualPage = 1
+MB_CompletarPagina:
 	MOV R1 , ARG1
 	MOV R0 , Size_Bebidas
 	MOV [R1] , R0					; ARG1 = size_Bebidas
@@ -754,14 +758,78 @@ MenuBebidas:
 	MOV R2 , ARG6
 	MOV R0 , Bebidas_X
 	MOV [R2] , R0					; ARG6 = Bebidas_X
-	MOV R2 , Atual_Page
-	MOV R0 , 1
-	MOV [R2] , R0					; AtualPage = 1
-	CALL Completar_pagina			; como a rotina ARG4 tem como resultado em ARG1 o numero de escritos 
-	
-	CALL LerInput	
+	CALL Completar_pagina			; como a rotina ARG4 tem como resultado em ARG1 o numero de escritos  ARG1 tem o numero de items escritos
+	MOV R6 , [R1]	 				; R6 = max optn
+MB_MostrarDisplay:
+	MOV R0 , Display_Bebidas
+	MOV [R1] , R0					; ARG1 = Display_Bebidas		
+	CALLF Mostrar_Display
+	CALL LerInput					
+	MOV R0 , PER_EN_VALOR
+	MOV R2 , [R0]					; R2 tem o input 
+	CMP R2 , 0
+	JZ MB_MostrarDisplayOPTN		; se igual a 0
+	MOV R4 , 1						; contador = 1
+MB_OPTN_While:						; R2 <= max check
+	CMP R2 , R4
+	JNZ MB_OPTN_While_continue;		; se input diferente do contador continue
+	SUB R4 , 1						; para dar o indice do item em relação ao primeiro
+	MOV R5 , ARG2
+	MOV R6 , [R5]
+	MOV R5 , Size_Stockitem
+	MUL R4 , R5						; para dar o numero de bytes de entrevalo entre o item e o primeiro
+	ADD R4 , R6						; R4 = endereco do item
+	MOV R5 , ITEM_A_COMPRAR			; R5 = endereco da variavel do ITEM_A_COMPRAR
+	MOV [R5] , R4					; ITEM_A_COMPRAR = endereco do item R4
+	CALL Mostrar_Quantidade
+	JMP MB_Fim
+MB_OPTN_While_continue:
+	ADD R4 , 1						; contador++
+	CMP R4 , R6						; max optn posivel para este display
+	JGT MB_MostrarErro				; se contador > max input esta fora dos limites
+	JMP MB_OPTN_While				; volta ao inicio do ciclo
+MB_MostrarDisplayOPTN:
+	MOV R6 , Display_OPN_Pages
+	MOV [R1] , R6					; ARG1 = Display_OPN_Pages
+	CALLF Mostrar_Display			; mostra o display que esta em ARG1
+	Call LerInput					; 
+	MOV R6 , [R0]					; R6 = input das OPTN
+	CMP R6 , 0						; cancelar
+	JEQ MB_MostrarDisplay
+	CMP R6 , 1						; Back to Main ?
+	JEQ MB_Fim
+	CMP R6 , 2						; pg anterior
+	JNZ MB_OPTN2
+	MOV R6 , [R3]					; R6 = pg atual
+	SUB R6 , 1						
+	MOV [R3] , R6					; Atual_Page -= 1
+	JMP MB_Limpar	
+MB_OPTN2:
+	CMP R6 , 3						; pg seguinte
+	JNZ MB_MostrarErro2				; se input nao pertence {0,1,2,3} mostra o erro
+	MOV R6 , [R3]					; R6 = atual page
+	ADD R6 , 1						
+	MOV [R3] , R6					; Atual_Page += 1
+MB_Limpar:
+	MOV R6 , Display_Bebidas
+	MOV [R1] , R6					; ARG1 = Display_Bebidas
+	CALLF Limpar_Display
+	JMP MB_CompletarPagina	
+MB_MostrarErro2:
+	MOV R6 , 3						; max = 3
+MB_MostrarErro:
+	MOV [R1] , R6					; ARG1 = max
+	CALL Mostrar_ErrorDisplay_OPTN
+	JMP MB_MostrarDisplay
+MB_Fim:
+	POP R6
+	POP R5
+	POP R4
+	POP R3
+	POP R2
+	POP R1
+	POP R0
 	RET
-	
 	
 	
 MenuLanches:
@@ -784,6 +852,11 @@ MenuLanches:
 	POP R2
 	POP R1
 	ret
+
+
+Mostrar_Quantidade:
+	ret
+
 
 ;Usada calcular primeiro e ultimo enderecos chamar o completar pagina
 ;ARG1 = Size Total
@@ -1044,6 +1117,7 @@ CPagina_NomePreco_Ciclo:
 	ADD R0 , R7						; avanca R0 para o item seguinte
 	JMP CPagina_NomePreco_Ciclo		; volta a completar mais uma linha
 CPagina_NomePrecoCiclo:
+	SUB R6 , 1
 	MOV [R1] , R6					; ARG1 fica com o max OPTN 
 	POP R9							; busca o valor de R9
 	POP R8							; busca o valor de R8
@@ -1218,6 +1292,8 @@ Mostrar_ErrorDisplay_OPTN:
 	PUSH R2							; guarda o valor atual de R2
 	MOV R1 , ARG1					; R1 fica com o valor do endereco do ARG1
 	MOV R0 , [R1]					; R0 fica com o valor do ARG1
+	MOV R2 , 48
+	ADD R0 , R2						; passa o valor de ARG1 para carater
 	MOV R2 , OPTN_Y					; R2 fica com o endereco do carater y do display ERRORDisplay_OPN
 	MOVB [R2] , R0					; o carater y do display ERRORDisplay_OPN fica com o valor do ARG1
 	MOV R2 , ERRORDisplay_OPN		; R2 fica com o endereco do display ERRORDisplay_OPN
