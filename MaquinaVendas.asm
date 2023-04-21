@@ -450,7 +450,7 @@
 		Stock_END 					EQU 3245H ; ultimo elemento do array
 		
 		Byte1_Linha1_Lanches		EQU 2110H ; 2100H + 16 (primeiro da segunda linha)
-		Lanches_X					EQU 2855H ; posisao do x
+		Lanches_X					EQU 2154H ; posisao do x
 		
 		Byte1_Linha1_Bebidas		EQU 2190H ; 2180H + 16 (primeiro da segunda linha)
 		Bebidas_X					EQU 21D4H ; posisao do x
@@ -833,25 +833,108 @@ MB_Fim:
 	
 	
 MenuLanches:
+	PUSH R0
 	PUSH R1
 	PUSH R2
-
+	PUSH R3
+	PUSH R4
+	PUSH R5
+	PUSH R6
+	MOV R3 , Atual_Page
+	MOV R0 , 1
+	MOV [R3] , R0					; AtualPage = 1
+ML_CompletarPagina:
 	MOV R1 , ARG1
-	MOV R2 , Stock
-	MOV [R1] , R2
-	
-	MOV R1 , ARG2
-	MOV R2 , Byte1_Linha1_Lanches
-	MOV [R1] , R2
-	
-	MOV R1 , ARG3
-	MOV R2 , 1
-	MOV [R1] , R2
-	CALLF Completar_Linha_NomePreco
-	
+	MOV R0 , Size_lanches
+	MOV [R1] , R0					; ARG1 = size_Bebidas
+	MOV R2 , ARG2
+	MOV R0 , Stock
+	MOV [R2] , R0					; ARG2 = Inicio do Stock_bebidas
+	MOV R2 , ARG3
+	MOV R0 , Stock_Bebibas			; fim dos lanches
+	MOV [R2] , R0					; ARG3 = fim do Stock_Beidas
+	MOV R2 , ARG4
+	MOV R0 , CompletarPagina_NomePreco
+	MOV [R2] , R0					; ARG4 = rotina para completar a pagina
+	MOV R2 , ARG5
+	MOV R0 , Byte1_Linha1_Lanches
+	MOV [R2] , R0					; ARG5 = Byte1_Linha1_Lanches
+	MOV R2 , ARG6
+	MOV R0 , Lanches_X
+	MOV [R2] , R0					; ARG6 = Lanches_X
+	CALL Completar_pagina			; como a rotina ARG4 tem como resultado em ARG1 o numero de escritos  ARG1 tem o numero de items escritos
+	MOV R6 , [R1]	 				; R6 = max optn
+ML_MostrarDisplay:
+	MOV R0 , Display_Snaks
+	MOV [R1] , R0					; ARG1 = Display_Bebidas		
+	CALLF Mostrar_Display
+	CALL LerInput					
+	MOV R0 , PER_EN_VALOR
+	MOV R2 , [R0]					; R2 tem o input 
+	CMP R2 , 0
+	JZ ML_MostrarDisplayOPTN		; se igual a 0
+	MOV R4 , 1						; contador = 1
+ML_OPTN_While:						; R2 <= max check
+	CMP R2 , R4
+	JNZ ML_OPTN_While_continue;		; se input diferente do contador continue
+	SUB R4 , 1						; para dar o indice do item em relação ao primeiro
+	MOV R5 , ARG2
+	MOV R6 , [R5]
+	MOV R5 , Size_Stockitem
+	MUL R4 , R5						; para dar o numero de bytes de entrevalo entre o item e o primeiro
+	ADD R4 , R6						; R4 = endereco do item
+	MOV R5 , ITEM_A_COMPRAR			; R5 = endereco da variavel do ITEM_A_COMPRAR
+	MOV [R5] , R4					; ITEM_A_COMPRAR = endereco do item R4
+	CALL Mostrar_Quantidade
+	JMP ML_Fim
+ML_OPTN_While_continue:
+	ADD R4 , 1						; contador++
+	CMP R4 , R6						; max optn posivel para este display
+	JGT ML_MostrarErro				; se contador > max input esta fora dos limites
+	JMP ML_OPTN_While				; volta ao inicio do ciclo
+ML_MostrarDisplayOPTN:
+	MOV R6 , Display_OPN_Pages
+	MOV [R1] , R6					; ARG1 = Display_OPN_Pages
+	CALLF Mostrar_Display			; mostra o display que esta em ARG1
+	Call LerInput					; 
+	MOV R6 , [R0]					; R6 = input das OPTN
+	CMP R6 , 0						; cancelar
+	JEQ ML_MostrarDisplay
+	CMP R6 , 1						; Back to Main ?
+	JEQ ML_Fim
+	CMP R6 , 2						; pg anterior
+	JNZ ML_OPTN2
+	MOV R6 , [R3]					; R6 = pg atual
+	SUB R6 , 1						
+	MOV [R3] , R6					; Atual_Page -= 1
+	JMP ML_Limpar	
+ML_OPTN2:
+	CMP R6 , 3						; pg seguinte
+	JNZ ML_MostrarErro2				; se input nao pertence {0,1,2,3} mostra o erro
+	MOV R6 , [R3]					; R6 = atual page
+	ADD R6 , 1						
+	MOV [R3] , R6					; Atual_Page += 1
+ML_Limpar:
+	MOV R6 , Display_Snaks
+	MOV [R1] , R6					; ARG1 = Display_Bebidas
+	CALLF Limpar_Display
+	JMP ML_CompletarPagina	
+ML_MostrarErro2:
+	MOV R6 , 3						; max = 3
+ML_MostrarErro:
+	MOV [R1] , R6					; ARG1 = max
+	CALL Mostrar_ErrorDisplay_OPTN
+	JMP ML_MostrarDisplay
+ML_Fim:
+	POP R6
+	POP R5
+	POP R4
+	POP R3
 	POP R2
 	POP R1
-	ret
+	POP R0
+	RET 
+	
 
 
 Mostrar_Quantidade:
