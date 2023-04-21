@@ -50,7 +50,7 @@
 		STRING ' '
 		
 		;Amendoins 7
-		STRING "M&Ms       "		;Nome
+		STRING "Broas      "		;Nome
 		STRING "   65"				;Quantidade
 		STRING '1'					;Preco Euros
 		STRING "10"					;Preco Cent
@@ -271,7 +271,7 @@
 		STRING "   Intruduza o  ";
 		STRING "numero de items:";
 		STRING "----------------";
-		STRING ">               ";
+		STRING ">_        0<X<=9";
 		STRING "                ";
 		STRING "----------------";
 		STRING "0>Cancelar      ";
@@ -362,7 +362,7 @@
 		STRING " Valor Inserido ";
 		STRING "fora dos limites";
 		STRING "----------------";
-		STRING "min: 0 	        ";
+		STRING "min: 0          ";
 		STRING "max: y          ";
 		STRING "----------------";
 		STRING "OK>     Continue";
@@ -381,17 +381,6 @@
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;													Displays De Erros Monetarios
 	;--------------------------------------------------------------------------------------------------------------------------------
-	;mostrado quando o utilizador insere uma moeda ou nota que a maquina nao aceita
-	Place 2500H	
-	ERRORDisplay_Dinehrio_DinheiroInvalido :
-		STRING "  So Aceitamos  ";
-		STRING "----------------";
-		STRING "0.10| 0.20 |0.50";
-		STRING "1.00| 2.00 |5.00";
-		STRING "----------------";
-		STRING "1>Tentar de novo";
-		STRING "0>Cancelar      ";
-
 	;mostrado quando a maquina nao tem troco
 	Place 2580H	
 	ERRORDisplay_Dinehrio_TrocoInvalido :
@@ -399,7 +388,7 @@
 		STRING " A Maquina nao  ";
 		STRING "   tem troco!   ";
 		STRING "----------------";
-		STRING "                ";
+		STRING "2>Continuar     ";
 		STRING "1>Tentar de novo";
 		STRING "0>Cancelar      ";
 		
@@ -417,23 +406,13 @@
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;													Displays De Erros de Stock
 	;--------------------------------------------------------------------------------------------------------------------------------
+	
 	;quando o utilizador insere uma quantidade superior a que tem em stock
 	Place 2680H	
-	ERRORDisplay_Stock_Insuficiente :
-		STRING "    Em Stock    ";
-		STRING "----------------";
-		STRING "nome       XXXXX"; nome do produto e quantidade em stock
-		STRING "                ";
-		STRING "----------------";
-		STRING "1>Tentar de novo";
-		STRING "0>Cancelar      ";
-
-	;quando o utilizador insere uma quantidade superior a que tem em stock
-	Place 2700H	
-	ERRORDisplay_Dinehrio_SemStock :
+	ERRORDisplay_SemStock :
 		STRING "----------------";
 		STRING " A Maquina nao  ";
-		STRING "   tem Stock!   ";
+		STRING "tem X em Stock !";
 		STRING "----------------";
 		STRING "                ";
 		STRING "1>Tentar de novo";
@@ -455,11 +434,15 @@
 		Byte1_Linha1_Bebidas		EQU 2190H ; 2180H + 16 (primeiro da segunda linha)
 		Bebidas_X					EQU 21D4H ; posisao do x
 		
+		Display_Confirmar_Q_X 		EQU 22B1H ; posissao de quantidade
+		ERRORDisplay_SemStock_X    	EQU 26A5H ; posissao de X napagina
+		
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;													Constantes
 	;--------------------------------------------------------------------------------------------------------------------------------
 		
 		CaraterVazio 				EQU 20H	; valor do espaco
+		CaraterZero					EQU 48	; valor do 0
 		CaraterAsterisco			EQU 2AH	; valor do *
 		CaraterPonto				EQU 2EH	; valor do .
 		Size_Display 				EQU 112	; Tamnho do Display em Bytes 112B 70H
@@ -471,7 +454,7 @@
 
 		Size_Stockitem 				EQU 20	; Tamanho do item
 		Size_Stockitem_name 		EQU 11	; Tamanho do nome no item
-		Size_Stockitem_Quantidade 	EQU 5	; Tamanho do Preco no item
+		Size_Stockitem_Quantidade 	EQU 5	; Tamanho da Quantidade no item
 		Size_Stockitem_PrecoEuros 	EQU 1	; Tamanho do Preco no item parte dos euros
 		Size_Stockitem_PrecoCent 	EQU 2	; Tamanho do Preco no item parte dos centimos
 
@@ -504,6 +487,7 @@
 			;    4D 40 71 32 21 56 65 23
 		Senha_END EQU 5018H
 		ITEM_A_COMPRAR:	WORD 0					; variavel para guardar o item a comprar
+		QUANTIDADE_DE_ITEMS:	WORD 0			; variavel para a quantidade de items a comprar
 
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;													Display
@@ -526,6 +510,7 @@
 		
 		PLACE  0010H
 		PER_EN: WORD 0							; Periferico CaraterEntrada 1 BYTE
+		PLACE  001EH
 		PER_OK: WORD 0							; Periferico butao ok
 	
 		
@@ -560,8 +545,6 @@ Main_CMP_2:
 Main_CMP_2_True:
 	CALL Mostrar_Produtos			; chama a rotina que mostra o ecra produtos
 	JMP Main						; salta para o inicio
-
-
 
 ; Rotina usada para mostrar o stock
 Mostrar_Stock:
@@ -707,14 +690,12 @@ MP_MostrarDisplay:
 	JZ MP_MostrarDisplay_Fim		; se sim salta para o fim, retornar ao main
 	CMP R3 , 1						; input = 1 ?
 	JNZ MP_MostrarDisplay_CP2		; se nao salta para a prossima comparacao
-	CALL MenuBebidas				; Mostra o menu das bebidas
-	CALL LerInput	
+	CALL MenuBebidas				; Mostra o menu das bebidas	
 	JMP MP_MostrarDisplay
 MP_MostrarDisplay_CP2:
 	CMP R3 , 2						; input = 2 ?
 	JNZ MP_MostrarDisplay_CP3		; se nao , entao o input e invalido
-	CALL MenuLanches				
-	CALL LerInput	
+	CALL MenuLanches					
 	JMP MP_MostrarDisplay
 MP_MostrarDisplay_CP3:
 	MOV R3 , 2
@@ -782,7 +763,7 @@ MB_OPTN_While:						; R2 <= max check
 	MOV R5 , ITEM_A_COMPRAR			; R5 = endereco da variavel do ITEM_A_COMPRAR
 	MOV [R5] , R4					; ITEM_A_COMPRAR = endereco do item R4
 	CALL Mostrar_Quantidade
-	JMP MB_Fim
+	JMP MB_MostrarDisplay
 MB_OPTN_While_continue:
 	ADD R4 , 1						; contador++
 	CMP R4 , R6						; max optn posivel para este display
@@ -886,7 +867,7 @@ ML_OPTN_While:						; R2 <= max check
 	MOV R5 , ITEM_A_COMPRAR			; R5 = endereco da variavel do ITEM_A_COMPRAR
 	MOV [R5] , R4					; ITEM_A_COMPRAR = endereco do item R4
 	CALL Mostrar_Quantidade
-	JMP ML_Fim
+	JMP ML_MostrarDisplay
 ML_OPTN_While_continue:
 	ADD R4 , 1						; contador++
 	CMP R4 , R6						; max optn posivel para este display
@@ -935,20 +916,93 @@ ML_Fim:
 	POP R0
 	RET 
 	
-
-
+;rotina usada para mostrar quantidade
 Mostrar_Quantidade:
-	ret
-
-
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	PUSH R3		
+	PUSH R4
+MostrarQ_inicio:
+	MOV R0 , ARG1					; R0 = endereco de ARG1
+	MOV R1 , Display_Introduza_Quantidade 
+	MOV [R0] , R1					; ARG1 = R1
+	CALLF Mostrar_Display			; 
+	CALL LerInput					;
+	MOV R4 , PER_EN_VALOR
+	MOV R4 , [R4]
+	CMP R4 , 0						; Cancelar ?
+	JZ MQ_Fim	
+	MOV R1 , 9
+	CMP R4 , R1						; valor introduzido > 9 ?
+	JLE MostrarQ_confirmar			; se < 9 
+	MOV R1 , 9						; se > 9
+	MOV [R0] , R1					; ARG1 = max
+	CALL Mostrar_ErrorDisplay_OPTN
+	JMP MostrarQ_inicio
+MostrarQ_confirmar:
+	MOV R1 , Display_Confirmar_Q_X
+	MOV R2 , 48
+	ADD R2 , R4
+	MOVB [R1] , R2					; X do display confirmar = quantidade intruduzida
+	MOV R1 , Display_Confirmar_Quantidade
+	MOV [R0] , R1					; ARG1 = R1
+	CALLF Mostrar_Display			; 
+	CALL LerInput					;
+	MOV R1 , PER_EN_VALOR			; R1 = endereco da variavel que guarda o valor do periferico de entrada
+	MOV R1 , [R1]					; R1 = valor do periferico de entrada
+	CMP R1 , 0						; não ?
+	JZ	MostrarQ_inicio
+	CMP R1 , 1						; sim ?
+	JZ MostrarQ_Avaliar
+	MOV R1 , 1						; se > 1
+	MOV [R0] , R1					; ARG1 = max = 1
+	CALL Mostrar_ErrorDisplay_OPTN
+	JMP MostrarQ_confirmar
+MostrarQ_Avaliar:
+	MOV R2 , ITEM_A_COMPRAR
+	MOV R2 , [R2]					; R2 = endereco do item a comprar						
+	MOV R3 , 14						; converter o preco do item em String para centimos e em numero					
+	ADD R3 , R2						; R3 aponta para a quantidade do item
+	MOV [R0] , R3					; ARG1 = R3
+	CALLF ConverterNumero2B		
+	MOV R2 , [R0]					; R2 = ARG1 = quantidade em stock do item
+	CMP R2 , R4
+	JLT MostrarQ_Erro				; se a quantidade em stock for menor 
+	MOV R2 , QUANTIDADE_DE_ITEMS
+	MOV [R2] , R4
+MQ_Fim:
+	POP R4
+	POP R3
+	POP R2
+	POP R1
+	POP R0
+	RET
+MostrarQ_Erro:
+	MOV R1 , ERRORDisplay_SemStock_X
+	MOVB [R1] , R4					; X na pagina de erro = valor introduzido na quantidade
+	MOV R1 , ERRORDisplay_SemStock
+	MOV [R0] , R1						
+	CALLF Mostrar_Display
+	CALL LerInput
+	MOV R1 , PER_EN_VALOR			; R1 = endereco da variavel que guarda o valor do periferico de entrada
+	MOV R1 , [R1]					; R1 = valor do periferico de entrada
+	CMP R1 , 0						; Cancelar ?
+	JZ	MQ_Fim
+	CMP R1 , 1						; sim ?
+	JZ MostrarQ_inicio
+	MOV R1 , 1						; se > 1
+	MOV [R0] , R1					; ARG1 = max = 1
+	CALL Mostrar_ErrorDisplay_OPTN
+	JMP MostrarQ_Erro
+	
 ;Usada calcular primeiro e ultimo enderecos chamar o completar pagina
-;ARG1 = Size Total
+;ARG1 = Size Total\
 ;ARG2 = Artay Begin
 ;ARG3 = Array End
 ;ARG4 = Rotina de completar pagina
 ;ARG5 = 1 linha a escrever
 ;ARG6 = endereco do x
-
 ;result : 
 ;ARG2 = endereco do primeiro 
 ;ARG3 = endereco do ultimo 
@@ -1036,7 +1090,9 @@ LerInput_Ciclo:
 	JMP LerInput_Ciclo				; se nao volta ao inicio do ciclo
 LerInput_Fim:					
 	MOVB R2 , [R0]					; R2 fica com o valor do periferico entrada
-	MOV R1 , PER_EN_VALOR
+	MOV R1 , 48
+	SUB R2 , R1 					; char para numero	------------------------------->			
+	MOV R1 , PER_EN_VALOR			;
 	MOV [R1] , R2					; a variavel que guarda o valor fica com o valor do periferico de entrada
 	CALLF LimparPerifericos
 	POP R2 							; busca o valor atual de R2 inicial
@@ -1064,14 +1120,19 @@ PedirSenha_Senha:
 	MOV R4 , Display4Line			; R4 = primeiro endereco da linha 4 do display
 	ADD R4 , 4						; R4 = primerio endereco da senha a mostrar no display
 LerInput_Senha_Ciclo:
-	Call LerInput
-	MOVB R5 , [R0]					; R5 fica com o carater valor lido
+	MOV R5 , PER_EN
+	MOVB R5 , [R5]
+	CMP R5 , 0
+	JZ LerInput_Senha_Ciclo
+	;MOVB R5 , [R0]					; R5 fica com o carater valor lido
 	MOVB [R1] , R5					; A posisao R1 da mem. fica com o carater lido
 	MOVB [R4] , R3					; o primeiro carater fica com asterisco
 	ADD R4 , 1						; R4 = char seguinte da senha
 	ADD R1 , 1						; R1 = endereco seguinte onde e para guardar a senha
 	CMP R1 , R2						; comparar a posisao atual da senha com a ultima
+	CALLF LimparPerifericos
 	JLT LerInput_Senha_Ciclo		; se for < que a ultima le um carater
+	CALL LerInput
 	POP R5 							; busca o valor atual de R3 inicial
 	POP R4 							; busca o valor atual de R3 inicial
 	POP R3 							; busca o valor atual de R3 inicial
@@ -1421,7 +1482,7 @@ ColocarNumero2B:
 	JMP ColocarNumero2B_Fim			; salta para o fim
 ColocarNumero2B_CMP_Fim:
 	ADD R0 , R3						; R0 tem o carater
-	MOV R5 , CaraterVazio
+	MOV R5 , CaraterZero
 	MOV R2 , ARG2
 	MOV R3 , [R2]
 	MOVB [R3] , R5					; as desenas e vaizio
@@ -1446,16 +1507,16 @@ ConverterNumero2B:
 	PUSH R5							; guarda o valor atual de R3
 	MOV R3 , 48						; numero para passar numeropara char
 	MOV R1 , ARG1					; R1 Tem o endereco do ARG1
-	MOVB R4 , [R1]					; R4 tem o valor do ARG1
+	MOV R4 , [R1]					; R4 tem o valor do ARG1
 	MOVB R0 , [R4]					; Tem o carater das dezenas
-	MOV R2 , CaraterVazio			; R2 = CaraterVazio
+	MOV R2 , CaraterZero			; R2 = CaraterVazio
 	CMP R0 , R2			
 	JEQ ConverterNumero_soUnidades  ; Se igual a vazio significa que so temos unidades
 	SUB R0 , R3						; R0 tem as desenas
 	MOV R2 , 10
 	MUL R0 , R2						; o  byte das dezenas vale o numero vezes 10
 	ADD R4 , 1						; R4 avanca para o byte seguinte (carater das unidades)
-	MOV R5 , [R4]					; R5 tem o char unidades
+	MOVB R5 , [R4]					; R5 tem o char unidades
 	SUB R5 , R3						; R5 tem as unidades
 	ADD R0 , R5						; R0 tem o valor completo dezenas + unidades
 	JMP ConverterNumero_Fim		; sata para o fim
