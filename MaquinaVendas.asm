@@ -481,7 +481,7 @@
 		ITEM_A_COMPRAR:	WORD 0					; variavel para guardar o item a comprar
 		QUANTIDADE_DE_ITEMS:	WORD 0			; variavel para a quantidade de items a comprar
 		TOTAL_A_PAGAR: WORD 0					; variavel para a guardar o total a pagar
-		DINHEIRO_INSERIDO:	WORD 0				; variavel para o total inserido em centimos
+		TOTAL_INSERIDO:	WORD 0					; variavel para o total inserido em centimos
 		QT_10 : WORD 0							; variavel guarda as moedas 10 centimos 
 		QT_20 : WORD 0							; variavel guarda as moedas 20 centimos 
 		QT_50 : WORD 0							; variavel guarda as moedas 50 centimos 
@@ -1002,7 +1002,10 @@ InserirDinheiro:
 	PUSH R2
 	PUSH R3		
 	PUSH R4
+	PUSH R5
 	CALL CalcularTotal				; TOTAL_A_PAGAR = total
+	MOV R3 , 0						; R3 = total acomulado inicia com 0
+InserirMostrarDisplay:	
 	MOV R1 , ARG1 					; R1 = endereco ARG1
 	MOV R0 , TOTAL_A_PAGAR			; R0 = endereco do preco total
 	MOV R0 , [R0]					; R0= preco total em centimos
@@ -1010,16 +1013,15 @@ InserirDinheiro:
 	MOV R2 , Display_Introduza_Dinheiro
 	MOV R0 , 6						; R0 = numero do carater para comecar a escrever na linha do displar
 	ADD R0 , R2
-	MOV R3 , ARG2
-	MOV [R3] , R0					; ARG2 = endereco a colocar o total
+	MOV R4 , ARG2
+	MOV [R4] , R0					; ARG2 = endereco a colocar o total
 	CALLF Colocar_preco 
 	MOV [R1] , R2					; R1 					
 	CALLF Mostrar_Display
-	MOV R3 , 0						; R3 = total acumolado inicia com 0
 Inserir:
-	MOV R2 , Display_ID_Total_VISIBLE	; R1 = endereco depois de : na pagina
+	MOV R5 , Display_ID_Total_VISIBLE	; R1 = endereco depois de : na pagina
 	MOV R1 , ARG2
-	MOV [R1] , R2					; ARG2 = endereco depois : na pagina
+	MOV [R1] , R5					; ARG2 = endereco depois : na pagina
 	MOV R1 , ARG1
 	MOV [R1] , R3					; ARG1 = troco
 	CALLF Colocar_preco
@@ -1043,7 +1045,7 @@ Inserir_20:
 	CMP R0 , 3
 	JNZ Inserir_50					; insere 10 sentimos
 	MOV R1 , 20						; R1 = 10
-	ADD R3 , R1						; R3 = Total+=10
+	ADD R3 , R1						; R3 = Total+=20
 	MOV R1 , QT_20					; 
 	MOV R4 , [R1];	
 	ADD R4 , 1						
@@ -1053,7 +1055,7 @@ Inserir_50:
 	CMP R0 , 4
 	JNZ Inserir_100					; insere 10 sentimos
 	MOV R1 , 50						; R1 = 10
-	ADD R3 , R1						; R3 = Total+=10
+	ADD R3 , R1						; R3 = Total+=50
 	MOV R1 , QT_50					; 
 	MOV R4 , [R1];	
 	ADD R4 , 1						
@@ -1063,7 +1065,7 @@ Inserir_100:
 	CMP R0 , 5
 	JNZ Inserir_200					; insere 10 sentimos
 	MOV R1 , 100						; R1 = 10
-	ADD R3 , R1						; R3 = Total+=10
+	ADD R3 , R1						; R3 = Total+=100
 	MOV R1 , QT_1					; 
 	MOV R4 , [R1];	
 	ADD R4 , 1						
@@ -1073,28 +1075,31 @@ Inserir_200:
 	CMP R0 , 6
 	JNZ Inserir_500					; insere 10 sentimos
 	MOV R1 , 200					; R1 = 10
-	ADD R3 , R1						; R3 = Total+=10
+	ADD R3 , R1						; R3 = Total+=200
 	MOV R1 , QT_2					; 
 	MOV R4 , [R1];	
 	ADD R4 , 1						
 	MOV [R1] , R4					; QT_2+=1
 	JMP Inserir
 Inserir_500:
-	CMP R0 , 6
+	CMP R0 , 7
 	JNZ Inserir_ErroOPTN			; insere 10 sentimos
 	MOV R1 , 500					; R1 = 10
-	ADD R3 , R1						; R3 = Total+=10
+	ADD R3 , R1						; R3 = Total+=500
 	MOV R1 , QT_5					; 
 	MOV R4 , [R1];	
 	ADD R4 , 1						
 	MOV [R1] , R4					; QT_5+=1	
 	JMP Inserir						; volta ao inicio do ciclo ate o utilizador continuar
 Inserir_ErroOPTN:
-	MOV R1 , 1						; se > 1
-	MOV [R0] , R1					; ARG1 = max = 1
+	MOV R1 , 7						; se > 7
+	MOV R0 , ARG1
+	MOV [R0] , R1					; ARG1 = max = 7
 	CALL Mostrar_ErrorDisplay_OPTN
-	JMP Inserir	
+	JMP InserirMostrarDisplay	
 Inserir_Continuar:
+	MOV R0 , TOTAL_INSERIDO			; R0 = endereco de TOTAL_INSERIDO
+	MOV [R0] , R3					; TOTAL_INSERIDO = R3
 	CALL Mostrar_Talao
 Inserir_Fim:
 	POP R4 
