@@ -297,7 +297,7 @@
 		STRING "TOTAL:X         ";
 		STRING "1>Continuar     ";
 		STRING "0>Cancelar      ";
-				
+
 	;Display Opcoes
 	Place 2400H	
 	Display_Opcoes : 
@@ -308,7 +308,7 @@
 		STRING "1>Pag. Seguinte ";
 		STRING "0>Voltar        ";
 		STRING "----------------";
-		
+
 	;Display Stock
 	Place 2800H	
 	Display_Stock : 			 ;este e um parte do display as 4 proximas linhas sao preenchidas com base no array
@@ -426,6 +426,7 @@
 		Display_Confirmar_Q_X 		EQU 22B1H ; posissao de quantidade
 		ERRORDisplay_SemStock_X    	EQU 26A5H ; posissao de X napagina
 		Display_ID_Total			EQU 2346H ; posissao do total
+		Display_ID_Total_VISIBLE	EQU 0066H ; posissao do total quando o display inserir dinheiro esta visivel
 		
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;													Constantes
@@ -468,7 +469,8 @@
 		ARG4: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
 		ARG5: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
 		ARG6: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
-				
+		ARG7: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
+		
 		gggggst EQU 5000H;dsa
 		
 		PLACE 5010H
@@ -478,6 +480,7 @@
 		Senha_END EQU 5018H
 		ITEM_A_COMPRAR:	WORD 0					; variavel para guardar o item a comprar
 		QUANTIDADE_DE_ITEMS:	WORD 0			; variavel para a quantidade de items a comprar
+		TOTAL_A_PAGAR: WORD 0					; variavel para a guardar o total a pagar
 		DINHEIRO_INSERIDO:	WORD 0				; variavel para o total inserido em centimos
 		QT_10 : WORD 0							; variavel guarda as moedas 10 centimos 
 		QT_20 : WORD 0							; variavel guarda as moedas 20 centimos 
@@ -517,8 +520,7 @@
 PLACE 0000H							; para colocar as introcoes no inicio da memoria
 Begin:
 	JMP Main
-	
-	
+
 PLACE 0100H
 Main :								; programa principal
 	MOV R0 , ARG1					; R0 fica com o valor do endereco do ARG1
@@ -752,7 +754,7 @@ MB_OPTN_While:						; R2 <= max check
 	CMP R2 , R4
 	JNZ MB_OPTN_While_continue;		; se input diferente do contador continue
 	SUB R4 , 1						; para dar o indice do item em relação ao primeiro
-	MOV R5 , ARG2
+	MOV R5 , ARG7
 	MOV R6 , [R5]
 	MOV R5 , Size_Stockitem
 	MUL R4 , R5						; para dar o numero de bytes de entrevalo entre o item e o primeiro
@@ -809,7 +811,6 @@ MB_Fim:
 	POP R0
 	RET
 	
-	
 MenuLanches:
 	PUSH R0
 	PUSH R1
@@ -827,7 +828,7 @@ ML_CompletarPagina:
 	MOV [R1] , R0					; ARG1 = size_Bebidas
 	MOV R2 , ARG2
 	MOV R0 , Stock
-	MOV [R2] , R0					; ARG2 = Inicio do Stock_bebidas
+	MOV [R2] , R0					; ARG2 = Inicio do Stock_Lanches
 	MOV R2 , ARG3
 	MOV R0 , Stock_Bebibas			; fim dos lanches
 	MOV [R2] , R0					; ARG3 = fim do Stock_Beidas
@@ -856,14 +857,15 @@ ML_OPTN_While:						; R2 <= max check
 	CMP R2 , R4
 	JNZ ML_OPTN_While_continue;		; se input diferente do contador continue
 	SUB R4 , 1						; para dar o indice do item em relação ao primeiro
-	MOV R5 , ARG2
-	MOV R6 , [R5]
+	MOV R5 , ARG7
+	MOV R6 , [R5]					; R6 = endereco do primeiro a ser escrito
 	MOV R5 , Size_Stockitem
 	MUL R4 , R5						; para dar o numero de bytes de entrevalo entre o item e o primeiro
 	ADD R4 , R6						; R4 = endereco do item
 	MOV R5 , ITEM_A_COMPRAR			; R5 = endereco da variavel do ITEM_A_COMPRAR
 	MOV [R5] , R4					; ITEM_A_COMPRAR = endereco do item R4
-	CALL Mostrar_Quantidade
+	CALL Mostrar_Quantidade			; pede a quantidade de items
+	CALL InserirDinheiro			; mostra o display de inserir dinheiro
 	JMP ML_MostrarDisplay
 ML_OPTN_While_continue:
 	ADD R4 , 1						; contador++
@@ -1000,13 +1002,22 @@ InserirDinheiro:
 	PUSH R2
 	PUSH R3		
 	PUSH R4
+	CALL CalcularTotal				; TOTAL_A_PAGAR = total
 	MOV R1 , ARG1 					; R1 = endereco ARG1
+	MOV R0 , TOTAL_A_PAGAR			; R0 = endereco do preco total
+	MOV R0 , [R0]					; R0= preco total em centimos
+	MOV [R1] , R0 					; ARG1 = preco
 	MOV R2 , Display_Introduza_Dinheiro
+	MOV R0 , 6						; R0 = numero do carater para comecar a escrever na linha do displar
+	ADD R0 , R2
+	MOV R3 , ARG2
+	MOV [R3] , R0					; ARG2 = endereco a colocar o total
+	CALLF Colocar_preco 
 	MOV [R1] , R2					; R1 					
 	CALLF Mostrar_Display
 	MOV R3 , 0						; R3 = total acumolado inicia com 0
 Inserir:
-	MOV R2 , Display_ID_Total		; R1 = endereco depois de : na pagina
+	MOV R2 , Display_ID_Total_VISIBLE	; R1 = endereco depois de : na pagina
 	MOV R1 , ARG2
 	MOV [R1] , R2					; ARG2 = endereco depois : na pagina
 	MOV R1 , ARG1
@@ -1023,8 +1034,10 @@ Inserir:
 	JNZ Inserir_20					; insere 10 sentimos
 	MOV R1 , 10						; R1 = 10
 	ADD R3 , R1						; R3 = Total+=10
-	MOV R1 , QT_10					; 
-	ADD [R1] , 1					; QT_10+=1
+	MOV R1 , QT_10		
+	MOV R4 , [R1];	
+	ADD R4 , 1						
+	MOV [R1] , R4					; QT_10+=1
 	JMP Inserir
 Inserir_20:
 	CMP R0 , 3
@@ -1032,7 +1045,9 @@ Inserir_20:
 	MOV R1 , 20						; R1 = 10
 	ADD R3 , R1						; R3 = Total+=10
 	MOV R1 , QT_20					; 
-	ADD [R1] , 1					; QT_20+=1
+	MOV R4 , [R1];	
+	ADD R4 , 1						
+	MOV [R1] , R4					; QT_20+=1
 	JMP Inserir
 Inserir_50:
 	CMP R0 , 4
@@ -1040,7 +1055,9 @@ Inserir_50:
 	MOV R1 , 50						; R1 = 10
 	ADD R3 , R1						; R3 = Total+=10
 	MOV R1 , QT_50					; 
-	ADD [R1] , 1					; QT_50+=1
+	MOV R4 , [R1];	
+	ADD R4 , 1						
+	MOV [R1] , R4					; QT_50+=1
 	JMP Inserir
 Inserir_100:
 	CMP R0 , 5
@@ -1048,7 +1065,9 @@ Inserir_100:
 	MOV R1 , 100						; R1 = 10
 	ADD R3 , R1						; R3 = Total+=10
 	MOV R1 , QT_1					; 
-	ADD [R1] , 1					; QT_1+=1
+	MOV R4 , [R1];	
+	ADD R4 , 1						
+	MOV [R1] , R4					; QT_1+=1
 	JMP Inserir
 Inserir_200:
 	CMP R0 , 6
@@ -1056,7 +1075,9 @@ Inserir_200:
 	MOV R1 , 200					; R1 = 10
 	ADD R3 , R1						; R3 = Total+=10
 	MOV R1 , QT_2					; 
-	ADD [R1] , 1					; QT_2+=1
+	MOV R4 , [R1];	
+	ADD R4 , 1						
+	MOV [R1] , R4					; QT_2+=1
 	JMP Inserir
 Inserir_500:
 	CMP R0 , 6
@@ -1064,9 +1085,11 @@ Inserir_500:
 	MOV R1 , 500					; R1 = 10
 	ADD R3 , R1						; R3 = Total+=10
 	MOV R1 , QT_5					; 
-	ADD [R1] , 1					; QT_5+=1	
+	MOV R4 , [R1];	
+	ADD R4 , 1						
+	MOV [R1] , R4					; QT_5+=1	
 	JMP Inserir						; volta ao inicio do ciclo ate o utilizador continuar
-Inserir_ErroOPTN
+Inserir_ErroOPTN:
 	MOV R1 , 1						; se > 1
 	MOV [R0] , R1					; ARG1 = max = 1
 	CALL Mostrar_ErrorDisplay_OPTN
@@ -1074,6 +1097,7 @@ Inserir_ErroOPTN
 Inserir_Continuar:
 	CALL Mostrar_Talao
 Inserir_Fim:
+	POP R4 
 	POP R3
 	POP R2
 	POP R1
@@ -1230,6 +1254,7 @@ Limpar_Display_Ciclo:
 ;ARG2 = endereco do primeiro 
 ;ARG3 = endereco do ultimo 
 ;ARG1 = numero de escritos se ARG4 tem como resultado o numero de escritos
+;ARG7 = endereco do primeiro
 Completar_pagina:
 	PUSH R0							; guarda o valor atual de R0
 	PUSH R1							; guarda o valor atual de R1
@@ -1259,6 +1284,10 @@ Completar_pagina:
 	MOV R8 , [R3]					; R8 = Array Begin
 	ADD R2 , R8						; R2 = endereco do primeiro 
 	MOV [R1] , R2					; ARG1 endereco do primeiro
+	PUSH R9
+	MOV R9 , ARG7					; ARG7 = endereco do primeiro
+	MOV [R9] , R2
+	POP R9
 	MOV R7 , R2						; R7 = endereco do primeiro
 	MOV R2 , R4
 	MUL R2 , R9						; last = pg atual * entervalo em bytes por pg 
@@ -1612,7 +1641,7 @@ ConverterNumero2B:
 	JMP ConverterNumero_Fim		; sata para o fim
 ConverterNumero_soUnidades:
 	ADD R4 , 1						; avanca R4 para o byte seguinte
-	MOV R0 , [R4]					; R0 tem o char das unidades
+	MOVB R0 , [R4]					; R0 tem o char das unidades
 	SUB R0 , R3						; R0 tem as unidades
 ConverterNumero_Fim:
 	MOV [R1] , R0					;
@@ -1697,10 +1726,11 @@ Colocar_preco:
 	PUSH R2
 	PUSH R3
 	PUSH R4
-	MOV R4 , 48
-	MOV  R0 , ARG1
-	MOV RO , [R1]					; R0 = num em centimos
-	MOV R1 , ARG2					; R1 = endereco depois de : na pagina
+	PUSH R5
+	MOV R5 , 48
+	MOV R0 , ARG1
+	MOV R0 , [R0]					; R0 = num em centimos
+	MOV R1 , ARG2					; R1 = endereco depois de ':' na pagina
 	MOV R1 , [R1]					; R1 = endereco 
 	MOV R3 , R0						; R3 = num em centimos
 	MOV R2 , 10000					
@@ -1711,7 +1741,7 @@ Colocar_preco:
 	SUB R3 , R4						; 9999 - 999 = 9000
 	SUB R0 , R3						; se 9999 - 9000  = 999
 	DIV R3 , R2						; 9000 /  1000 = 9
-	ADD R3 , R4						; 9 para carater
+	ADD R3 , R5						; 9 para carater
 	MOVB [R1] , R3					; endereco R1 fica com as dezenas de euros
 	ADD R1 , 1						; endereco seguinte
 	MOV R3 , R0						; R3 = num em centimos
@@ -1723,7 +1753,7 @@ Colocar_preco:
 	SUB R3 , R4						; 999 - 99 = 900
 	SUB R0 , R3						; se 999 - 900  = 99
 	DIV R3 , R2						; 900 / 100 = 9
-	ADD R3 , R4						; 9 para carater
+	ADD R3 , R5						; 9 para carater
 	MOVB [R1] , R3					; endereco R1 fica com as unidades de euros
 	ADD R1 , 1						; endereco seguinte
 	MOV R3 , CaraterPonto
@@ -1738,15 +1768,71 @@ Colocar_preco:
 	SUB R3 , R4						; 99 - 9 = 90
 	SUB R0 , R3						; se 99 - 90  = 9
 	DIV R3 , R2						; 90 / 10 = 9
-	ADD R3 , R4						; 9 para carater
+	ADD R3 , R5						; 9 para carater
 	MOVB [R1] , R3					; endereco R1 fica com as dezenas de centimos
 	ADD R1 , 1						; endereco seguinte
-	ADD R0 , R4						; 9 para carater
+	ADD R0 , R5						; 9 para carater
 	MOVB [R1] , R0					; endereco R1 fica com as unidades de centimos
 	ADD R1 , 1						; endereco seguinte
+	POP R5
 	POP R4
 	POP R3
 	POP R2
 	POP R1
 	POP R0
 	RETF
+	
+;Rotina devolve o preco do item 
+;ARG1 = endereco do item
+;result ARG1 
+LerPrecoItem:
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	PUSH R3
+	PUSH R4
+	MOV R4 , 48						; R4 = valor utilizado para converter carater em numero
+	MOV R0 , ARG1
+	MOV R1 , [R0]					; R1 = ARG1 = endereco do item
+	MOV R2 , 16						; Guarda no R2 o valor que vai ser usado para chegarmos ao valor do preco do item euros
+	ADD R1 , R2
+	MOVB R3 , [R1]					; R3 = carater do preco do item , euros
+	SUB R3 , R4						; R3 = euros em numero ( R3 - 48)
+	MOV R2 , 100					; R2 = 1000
+	MUL R3 , R2						; R3 = euros em centimos				;
+	ADD R1 , 1						; R1 aponta para os centimos
+	MOV [R0] , R1					; ARG1 = endereco dos centimos do item
+	CALLF ConverterNumero2B				
+	MOV R4 , [R0]
+	ADD R3 , R4						; R3 + centimos dos items 
+	MOV [R0] , R3					; ARG1 = preco lido
+	POP R4
+	POP R3
+	POP R2
+	POP R1
+	POP R0
+	RET
+
+;Rotina devolve o preco total a pagar  (quantidade * preco)
+;result
+;ARG1 = endereco do item
+;TOTAL_A_PAGAR = total em centimos
+CalcularTotal:
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	MOV R1 , ARG1					; R1 = endereco do ARG1; 
+	MOV R0 , ITEM_A_COMPRAR 		; 
+	MOV R0 , [R0]					; R0 = endereco do item a comprar
+	MOV [R1] , R0					; ARG1 = endereco do item a comprar
+	CALL LerPrecoItem
+	MOV R0 , [R1]					; R0 = Preco do item lido
+	MOV R2 , QUANTIDADE_DE_ITEMS
+	MOV R2 , [R2]					; R2 = Quantidade de items
+	MUL R2 , R0						; R2 = Quantidade de items * preco
+	MOV R1 , TOTAL_A_PAGAR
+	MOV [R1] , R2					; ARG1 = total
+	POP R2
+	POP R1
+	POP R0
+	RET
