@@ -295,7 +295,7 @@
 		
 	;Display intuduza o dinheiro
 	Place 2300H	
-	Display_Introduza_Dinheiro : 
+	Display_Introduza_Dinheiro: 
 		STRING "CONTA:          ";
 		STRING "2>0.10  | 5>1.00";
 		STRING "3>0.20  | 6>2.00";
@@ -404,7 +404,7 @@
 	
 	;quando o utilizador insere uma quantidade superior a que tem em stock
 	Place 2680H	
-	ERRORDisplay_SemStock :
+	ERRORDisplay_SemStock:
 		STRING "----------------";
 		STRING " A Maquina nao  ";
 		STRING "tem X em Stock !";
@@ -1711,14 +1711,14 @@ CompararSenha_Fim:
 ; Dinheiro Inserido R6
 ; R7 fica guardado o valor do subtracao do R2 com R6
 CalcularTroco:
-	PUSH R0							; Guarda o valor atual do R0 sem ter influencia na memoria
-	PUSH R1							; Guarda o valor atual do R1 sem ter influencia na memoria
-	PUSH R2							; Guarda o valor atual do R2 sem ter influencia na memoria
-	PUSH R3							; Guarda o valor atual do R3 sem ter influencia na memoria
-	PUSH R4							; Guarda o valor atual do R4 sem ter influencia na memoria
-	PUSH R5							; Guarda o valor atual do R5 sem ter influencia na memoria
-	PUSH R6							; Guarda o valor atual do R6 sem ter influencia na memoria
-	PUSH R7							; Guarda o valor atual do R7 sem ter influencia na memoria
+	PUSH R0							; Guarda o valor atual do R0
+	PUSH R1							; Guarda o valor atual do R1
+	PUSH R2							; Guarda o valor atual do R2
+	PUSH R3							; Guarda o valor atual do R3
+	PUSH R4							; Guarda o valor atual do R4
+	PUSH R5							; Guarda o valor atual do R5
+	PUSH R6							; Guarda o valor atual do R6
+	PUSH R7							; Guarda o valor atual do R7
 	MOV R0, ARG1					; Guarda no R0 o valor que corresponde ao endereco do item que foi pedido
 	MOV R1, 16						; Guarda no R1 o valor que vai ser usado para chegarmos ao valor do preco do item
 	MOVB R2, [R0+R1]				; Guarda em R2 o valor do preco do item do item pedido
@@ -1741,11 +1741,11 @@ CalcularTroco:
 ; R7 agr e o resultado de troco a dar se possivel
 Troco:
 	SUB R7, R6						; Subtrai o Preco Total do Item pelo o Dinheiro Inserido
-	PUSH R0							;
-	PUSH R1							;
-	PUSH R2							;
-	PUSH R3							;
-	PUSH R4							;
+	PUSH R0							; Guarda o valor atual do R0
+	PUSH R1							; Guarda o valor atual do R1
+	PUSH R2							; Guarda o valor atual do R2
+	PUSH R3							; Guarda o valor atual do R3
+	PUSH R4							; Guarda o valor atual do R4
 	MOV R0, Quantidade_Notas_500	; R0 tem o endereco da quantidade de stock de notas de 5
 	MOV R1,[R0]						; R1 tem o o valor da quantidade de stock
 	CALL While						; Executa o While Loop
@@ -1806,7 +1806,55 @@ Mostrar_ErrorDisp_Dinheiro:
 	MOV R1, ERRORDisplay_Dinheiro_Insuficiente;
 	MOV	[R0], R1					;
 	CALLF Mostrar_Display			;
-; usado para determonar a pagina atual 
+
+; Vai alterar a quantidade de Stock Monetario removendo o necessario para o troco
+; Vai mostrar o display do Talao
+Pagamento_Feito:
+	PUSH R0							; Guarda o valor atual do R0
+	PUSH R1							; Guarda o valor atual do R1
+	PUSH R2							; Guarda o valor atual do R2
+	MOV R0, qt_5					; R0 vai possuir o endereco da quantidade a devolver para o troco e remover
+	MOV R0, [R0]					; R0 vai possuir o valor da quantidade a devolver para o troco e remover
+	MOV R1, Quantidade_Notas_500	; R1 vai possuir o endereco da quantidade do Stock Monetario
+	MOV R2, [R1]					; R2 vai possuir o valor da quantidade do Stock Monetario 
+	SUB R2, R0						; Subtrai o Quantiadade do Stock Monetario pelo Quantidade a 
+	MOV [R1], R2					; Altera na memoria a quantidade atual
+	MOV R0, qt_2					; R0 vai possuir o endereco da quantidade a devolver para o troco e remover
+	MOV R0, [R0]					; R0 vai possuir o valor da quantidade a devolver para o troco e remover
+	MOV R1, Quantidade_Moedas_200	; R1 vai possuir o endereco da quantidade do Stock Monetario
+	MOV R2, [R1]					; R2 vai possuir o valor da quantidade do Stock Monetario 
+	SUB R2, R0						; Subtrai o Quantiadade do Stock Monetario pelo Quantidade a 
+	MOV [R1], R2					; Altera na memoria a quantidade atual
+	MOV R0, qt_1					; R0 vai possuir o endereco da quantidade a devolver para o troco e remover
+	MOV R0, [R0]					; R0 vai possuir o valor da quantidade a devolver para o troco e remover
+	MOV R1, Quantidade_Moedas_100	; R1 vai possuir o endereco da quantidade do Stock Monetario
+	MOV R2, [R1]					; R2 vai possuir o valor da quantidade do Stock Monetario 
+	SUB R2, R0						; Subtrai o Quantiadade do Stock Monetario pelo Quantidade a 
+	MOV [R1], R2					; Altera na memoria a quantidade atual
+	MOV R0, qt_050					; R0 vai possuir o endereco da quantidade a devolver para o troco e remover
+	MOV R0, [R0]					; R0 vai possuir o valor da quantidade a devolver para o troco e remover
+	MOV R1, Quantidade_Moedas_050	; R1 vai possuir o endereco da quantidade do Stock Monetario
+	MOV R2, [R1]					; R2 vai possuir o valor da quantidade do Stock Monetario 
+	SUB R2, R0						; Subtrai o Quantiadade do Stock Monetario pelo Quantidade a 
+	MOV [R1], R2					; Altera na memoria a quantidade atual
+	MOV R0, qt_0200					; R0 vai possuir o endereco da quantidade a devolver para o troco e remover
+	MOV R0, [R0]					; R0 vai possuir o valor da quantidade a devolver para o troco e remover
+	MOV R1, Quantidade_Moedas_020	; R1 vai possuir o endereco da quantidade do Stock Monetario
+	MOV R2, [R1]					; R2 vai possuir o valor da quantidade do Stock Monetario 
+	SUB R2, R0						; Subtrai o Quantiadade do Stock Monetario pelo Quantidade a 
+	MOV [R1], R2					; Altera na memoria a quantidade atual
+	MOV R0, qt_010					; R0 vai possuir o endereco da quantidade a devolver para o troco e remover
+	MOV R0, [R0]					; R0 vai possuir o valor da quantidade a devolver para o troco e remover
+	MOV R1, Quantidade_Moedas_010	; R1 vai possuir o endereco da quantidade do Stock Monetario
+	MOV R2, [R1]					; R2 vai possuir o valor da quantidade do Stock Monetario 
+	SUB R2, R0						; Subtrai o Quantiadade do Stock Monetario pelo Quantidade a 
+	MOV [R1], R2					; Altera na memoria a quantidade atual
+	POP R0							;
+	POP R1							;
+	POP R2							;
+	; Depois da alteracao feita no Stock Monetario so falta mostrar o display do Talao
+
+; usado para determinar a pagina atual 
 ; ARG1 Size total
 Calcular_paginaAtual:
 	PUSH R0							; guarda o valor atual de R0
@@ -1899,9 +1947,9 @@ Colocar_preco:
 	POP R0
 	RETF
 	
-;Rotina devolve o preco do item 
-;ARG1 = endereco do item
-;result ARG1 
+; Rotina devolve o preco do item 
+; ARG1 = endereco do item
+; result ARG1 
 LerPrecoItem:
 	PUSH R0
 	PUSH R1
@@ -1930,10 +1978,10 @@ LerPrecoItem:
 	POP R0
 	RET
 
-;Rotina devolve o preco total a pagar  (quantidade * preco)
-;result
-;ARG1 = endereco do item
-;TOTAL_A_PAGAR = total em centimos
+; Rotina devolve o preco total a pagar  (quantidade * preco)
+; result
+; ARG1 = endereco do item
+; TOTAL_A_PAGAR = total em centimos
 CalcularTotal:
 	PUSH R0
 	PUSH R1
