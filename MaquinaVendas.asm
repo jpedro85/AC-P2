@@ -482,12 +482,12 @@
 		QUANTIDADE_DE_ITEMS:	WORD 0			; variavel para a quantidade de items a comprar
 		TOTAL_A_PAGAR: WORD 0					; variavel para a guardar o total a pagar
 		TOTAL_INSERIDO:	WORD 0					; variavel para o total inserido em centimos
-		QT_10 : WORD 0							; variavel guarda as moedas 10 centimos 
-		QT_20 : WORD 0							; variavel guarda as moedas 20 centimos 
-		QT_50 : WORD 0							; variavel guarda as moedas 50 centimos 
-		QT_1 : WORD 0							; variavel guarda as moedas 1 euro
-		QT_2 : WORD 0							; variavel guarda as moedas 2 euro
-		QT_5 : WORD 0							; variavel guarda as notas 5 euro
+		qt_010 : WORD 0							; variavel guarda as moedas 10 centimos 
+		qt_020 : WORD 0							; variavel guarda as moedas 20 centimos 
+		qt_050 : WORD 0							; variavel guarda as moedas 50 centimos 
+		qt_1 : WORD 0							; variavel guarda as moedas 1 euro
+		qt_2 : WORD 0							; variavel guarda as moedas 2 euro
+		qt_5 : WORD 0							; variavel guarda as notas 5 euro
 
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;													Display
@@ -1036,60 +1036,60 @@ Inserir:
 	JNZ Inserir_20					; insere 10 sentimos
 	MOV R1 , 10						; R1 = 10
 	ADD R3 , R1						; R3 = Total+=10
-	MOV R1 , QT_10		
+	MOV R1 , qt_010		
 	MOV R4 , [R1];	
 	ADD R4 , 1						
-	MOV [R1] , R4					; QT_10+=1
+	MOV [R1] , R4					; QT_010+=1
 	JMP Inserir
 Inserir_20:
 	CMP R0 , 3
 	JNZ Inserir_50					; insere 10 sentimos
 	MOV R1 , 20						; R1 = 10
 	ADD R3 , R1						; R3 = Total+=20
-	MOV R1 , QT_20					; 
+	MOV R1 , qt_020					; 
 	MOV R4 , [R1];	
 	ADD R4 , 1						
-	MOV [R1] , R4					; QT_20+=1
+	MOV [R1] , R4					; qt_020+=1
 	JMP Inserir
 Inserir_50:
 	CMP R0 , 4
 	JNZ Inserir_100					; insere 10 sentimos
 	MOV R1 , 50						; R1 = 10
 	ADD R3 , R1						; R3 = Total+=50
-	MOV R1 , QT_50					; 
+	MOV R1 , qt_050					; 
 	MOV R4 , [R1];	
 	ADD R4 , 1						
-	MOV [R1] , R4					; QT_50+=1
+	MOV [R1] , R4					; qt_050+=1
 	JMP Inserir
 Inserir_100:
 	CMP R0 , 5
 	JNZ Inserir_200					; insere 10 sentimos
 	MOV R1 , 100						; R1 = 10
 	ADD R3 , R1						; R3 = Total+=100
-	MOV R1 , QT_1					; 
+	MOV R1 , qt_1					; 
 	MOV R4 , [R1];	
 	ADD R4 , 1						
-	MOV [R1] , R4					; QT_1+=1
+	MOV [R1] , R4					; qt_1+=1
 	JMP Inserir
 Inserir_200:
 	CMP R0 , 6
 	JNZ Inserir_500					; insere 10 sentimos
 	MOV R1 , 200					; R1 = 10
 	ADD R3 , R1						; R3 = Total+=200
-	MOV R1 , QT_2					; 
+	MOV R1 , qt_2					; 
 	MOV R4 , [R1];	
 	ADD R4 , 1						
-	MOV [R1] , R4					; QT_2+=1
+	MOV [R1] , R4					; qt_2+=1
 	JMP Inserir
 Inserir_500:
 	CMP R0 , 7
 	JNZ Inserir_ErroOPTN			; insere 10 sentimos
 	MOV R1 , 500					; R1 = 10
 	ADD R3 , R1						; R3 = Total+=500
-	MOV R1 , QT_5					; 
+	MOV R1 , qt_5					; 
 	MOV R4 , [R1];	
 	ADD R4 , 1						
-	MOV [R1] , R4					; QT_5+=1	
+	MOV [R1] , R4					; qt_5+=1	
 	JMP Inserir						; volta ao inicio do ciclo ate o utilizador continuar
 Inserir_ErroOPTN:
 	MOV R1 , 7						; se > 7
