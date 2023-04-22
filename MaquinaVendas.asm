@@ -179,51 +179,58 @@
 	Stock_Dineiro:
 		;Moedas 0.10
 		STRING "Moeda10Cent"		;Nome
+		STRING "   "
 		Quantidade_Moedas_010:
-		STRING "   99"				;Quantidade
+		STRING "99"					;Quantidade
 		STRING '0'					;Preco Euros
 		STRING "10"					;Preco Cent
 		STRING ' '
 		
 		;Moedas 0.20
 		STRING "Moeda20Cent"		;Nome
+		STRING "   "
 		Quantidade_Moedas_020:
-		STRING "   50"				;Quantidade
+		STRING "50"					;Quantidade
 		STRING '0'					;Preco Euros
 		STRING "20"					;Preco Cent
 		STRING ' '
 		
 		;Moedas 0.50
 		STRING "Moeda50Cent"		;Nome
+		STRING "   "
 		Quantidade_Moedas_050:
-		STRING "   10"				;Quantidade
+		STRING "10"					;Quantidade
 		STRING '0'					;Preco Euros
 		STRING "50"					;Preco Cent
 		STRING ' '
 		
 		;Moedas 1.00
 		STRING "Moeda 1Euro"		;Nome
+		STRING "   "
 		Quantidade_Moedas_100:
-		STRING "   73"				;Quantidade
+		STRING "73"					;Quantidade
 		STRING '0'					;Preco Euros
 		STRING "00"					;Preco Cent
 		STRING ' '
 		
 		;Moedas 2.00
 		STRING "Moeda 2Euro"		;Nome
+		STRING "   "
 		Quantidade_Moedas_200:
-		STRING "   52"				;Quantidade
+		STRING "52"					;Quantidade
 		STRING '2'					;Preco Euros
 		STRING "00"					;Preco Cent
 		STRING ' '
 		
 		;Moedas 5.00
 		STRING "Nota 5Euros"		;Nome
+		STRING "   "
 		Quantidade_Notas_500:
-		STRING "   10"				;Quantidade
+		STRING "10"					;Quantidade
 		STRING '5'					;Preco Euros
 		STRING "00"					;Preco Cent
 		STRING ' '
+		
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;													Displays Principais
 	;--------------------------------------------------------------------------------------------------------------------------------
@@ -347,6 +354,17 @@
 		STRING "1>Voltar        ";
 		STRING "----------------";
 		STRING "0>Cancelar      ";
+	
+	;mostrado quando complatada a compra
+	Place 2700H	
+	Display_OPN_Pages:
+		STRING "---- Talao  ----";
+		STRING "				"; nome do item
+		STRING "Preco:			";
+		STRING "Total:		    ";
+		STRING "Troco:          ";
+		STRING "----------------";
+		STRING "OK>Continuar    ";
 		
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;													Displays De Erros Gerais
@@ -383,9 +401,9 @@
 		STRING " A Maquina nao  ";
 		STRING "   tem troco!   ";
 		STRING "----------------";
-		STRING "2>Continuar     ";
-		STRING "1>Tentar de novo";
-		STRING "0>Cancelar      ";
+		STRING "                ";
+		STRING "1>Continuar     ";
+		STRING "0>Devolver      ";
 		
 	;mostrado quando o utilizador nao insere o dinheiro suficiente
 	Place 2600H	
@@ -395,8 +413,8 @@
 		STRING "e insuficiente! ";
 		STRING "----------------";
 		STRING "                ";
-		STRING "1>Tentar de novo";
-		STRING "0>Cancelar      ";
+		STRING "                ";
+		STRING "OK>Continuar    ";
 
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;													Displays De Erros de Stock
@@ -468,7 +486,6 @@
 		PER_EN_VALOR: 	WORD 0					; Criação da variavel global e inicializada a 0 que guarda o valor inserido
 		Senha_Introduzida: TABLE 4				; Criação da variavel global para guardar a palavra pass
 		Senha_Introduzida_END EQU 00BAH			;
-		Dinheiro_Inserido: WORD 0				; Dinheiro Inserido pelo Cliente (mostrado em Cents)
 		Atual_Page:		WORD 0					; Variavel que guarda a pagina atual do Stock
 		ARG1: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
 		ARG2: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
@@ -684,6 +701,7 @@ MS_Fim:
 	POP R0							; busca o valor atual de R0 inicial
 	RET
 
+; mostra o display produtos
 Mostrar_Produtos:
 	PUSH R0 
 	PUSH R1
@@ -719,7 +737,8 @@ MP_MostrarDisplay_Fim:
 	POP R1
 	POP R0
 	RET
-	
+
+; mostra o display bebidas
 MenuBebidas:
 	PUSH R0
 	PUSH R1
@@ -774,6 +793,8 @@ MB_OPTN_While:						; R2 <= max check
 	MOV R5 , ITEM_A_COMPRAR			; R5 = endereco da variavel do ITEM_A_COMPRAR
 	MOV [R5] , R4					; ITEM_A_COMPRAR = endereco do item R4
 	CALL Mostrar_Quantidade
+MB_inserir_dinheiro:
+	CALL InserirDinheiro			; mostra o display de inserir dinheiro
 	JMP MB_MostrarDisplay
 MB_OPTN_While_continue:
 	ADD R4 , 1						; contador++
@@ -822,7 +843,8 @@ MB_Fim:
 	POP R1
 	POP R0
 	RET
-	
+
+; mostra o menu lanches
 MenuLanches:
 	PUSH R0
 	PUSH R1
@@ -1016,7 +1038,8 @@ InserirDinheiro:
 	PUSH R4
 	PUSH R5
 	CALL CalcularTotal				; TOTAL_A_PAGAR = total
-	MOV R3 , 0						; R3 = total acomulado inicia com 0
+	MOV R0 , TOTAL_INSERIDO
+	MOV R3 , [R0]					; R3 = total acomulado inicia com 0
 InserirMostrarDisplay:	
 	MOV R1 , ARG1 					; R1 = endereco ARG1
 	MOV R0 , TOTAL_A_PAGAR			; R0 = endereco do preco total
@@ -1112,7 +1135,51 @@ Inserir_ErroOPTN:
 Inserir_Continuar:
 	MOV R0 , TOTAL_INSERIDO			; R0 = endereco de TOTAL_INSERIDO
 	MOV [R0] , R3					; TOTAL_INSERIDO = R3
-	CALL Mostrar_Talao
+	MOV R1 , ARG1
+	MOV R0 , 1						; ARG1 = 1 = Add ao stock qt_...
+	MOV [R1] , R0					; TOTAL_A_PAGAR = 0
+	CALL AtualizarStock
+	CALL CalcularTroco				; ARG1 = BOOL = dinheiro insuficiente , ARG2 = BOOL = nao tem troco
+	MOV R0 , ARG1
+	MOV R0 , [R0]					
+	CMP R0 , 1						; dinheiro insuficiente ?
+	JNZ Inserir_Checktroco		   ; pede mais dinehiro
+	CALL Mostrar_ERRORDisplay_Dinheiro_Insuficiente
+	JMP Inserir
+Inserir_Checktroco:
+	MOV R0 , ARG2
+	MOV R0 , [R0]					
+	CMP R0 , 1						; nao tem troco ?
+	JNZ Inserir_talao				; se tem troco salta para mostrar o display
+	MOV R0 , ARG1
+	MOV R1 , ERRORDisplay_Dinehrio_TrocoInvalido ; ARG1 = endereco do display
+	MOV [R0] , R1
+	CALLF Mostrar_Display			; mostra o display
+Inserir_Input:
+	CALL LerInput
+	MOV R0 , PER_EN_VALOR
+	MOV R0 , [R0]					; R0 = OPTN
+	CMP R0 , 0						; Devolver ?
+	JNZ Inserir_Check_Comtinuar
+	MOV R1 , TOTAL_A_PAGAR
+	MOV [R1] , R0					; TOTAL_A_PAGAR = 0
+	CALL CalcularTroco				; ARG1 = BOOL = dinheiro insuficiente , ARG2 = BOOL = nao tem troco
+	MOV R1 , ARG1
+	MOV R0 , 1						; ARG1 = 1 = subrair ao stock qt_...
+	CALL AtualizarStock
+	JMP Inserir_Fim
+Inserir_Check_Comtinuar:
+	CMP R0 , 1						; Continuar ?
+	JNZ Inserir_OPN_Error
+	CALL Mostrar_talao
+	CALL ResetVars  ; item ,quantidade, ... total a zero
+	JMP Inserir_Fim
+Inserir_OPN_Error:
+	MOV R1 , 1
+	MOV R0 , ARG1
+	MOV [R0] , R1					; ARG1 = max = 1
+	CALL Mostrar_ErrorDisplay_OPTN
+	JMP Inserir_Input
 Inserir_Fim:
 	POP R4 
 	POP R3
@@ -1123,8 +1190,6 @@ Inserir_Fim:
 	
 Mostrar_Talao:
 	Ret
-
-
 
 ;--------------------------------------------------------------------------------------------------------------------------------
 ;											Rotinas dos perifericos 
@@ -1588,6 +1653,18 @@ Mostrar_ErrorDisplay_OPTN_Ler:
 	POP R1							; busca o valor atual de R1 inicial
 	POP R0							; busca o valor atual de R0 inicial
 	RET								; termina a rotina
+	
+; rotina usada para mostrar pagina de erro Dinheiro_Insuficiente;
+Mostrar_ERRORDisplay_Dinheiro_Insuficiente
+	PUSH R0
+	PUSH R1
+	MOV R0 , ARG1
+	MOV R1 , ERRORDisplay_Dinheiro_Insuficiente	; ARG1 = endereco do Display
+	CALLF Mostrar_Display			; Mostra o Display
+	CALL LerInput					; pede ok
+	POP R1
+	POP R0
+	RET
 
 ; Rotina usada para ARG1 = valor a colocar ARG2 = endereco de onde colocar
 ColocarNumero2B:
@@ -1633,7 +1710,7 @@ ColocarNumero2B_Fim:
 	POP R0							; busca o valor atual de R0
 	RETF
 
-;rotina usada para converter 2 bytes  (1 das dezenas e outro das unidades) numnumero so ARG1 = posicao Result ARG1 = numero
+;rotina usada para converter 2 bytes  (1 das dezenas e outro das unidades) num numero so ARG1 = posicao Result ARG1 = numero
 ConverterNumero2B:
 	PUSH R0							; guarda o valor atual de R0
 	PUSH R1 						; guarda o valor atual de R1
@@ -1707,105 +1784,130 @@ CompararSenha_Fim:
 	RETF							; termina a rotina
 
 ; Funcao efetua a conta para verificar se e necessario dar troco ou nao e se o dinheiro inserido e sufeciente para efetuar a compra
-; Preco Total do item R2
-; Dinheiro Inserido R6
-; R7 fica guardado o valor do subtracao do R2 com R6
+; ARG1 = BOOL = dinheiro insuficiente
+; ARG2 = BOOL = nao tem troco
 CalcularTroco:
-	PUSH R0							; Guarda o valor atual do R0 sem ter influencia na memoria
-	PUSH R1							; Guarda o valor atual do R1 sem ter influencia na memoria
-	PUSH R2							; Guarda o valor atual do R2 sem ter influencia na memoria
-	PUSH R3							; Guarda o valor atual do R3 sem ter influencia na memoria
-	PUSH R4							; Guarda o valor atual do R4 sem ter influencia na memoria
-	PUSH R5							; Guarda o valor atual do R5 sem ter influencia na memoria
-	PUSH R6							; Guarda o valor atual do R6 sem ter influencia na memoria
-	PUSH R7							; Guarda o valor atual do R7 sem ter influencia na memoria
-	MOV R0, ARG1					; Guarda no R0 o valor que corresponde ao endereco do item que foi pedido
-	MOV R1, 16						; Guarda no R1 o valor que vai ser usado para chegarmos ao valor do preco do item
-	MOVB R2, [R0+R1]				; Guarda em R2 o valor do preco do item do item pedido
-	MOV R3, 48						; Guarda em R3 o valor da conversao o valor que estar em R2 que esta em ASCII para numerico em binario
-	SUB R2, R3						; O R2 agora possui oo valor do preco do item da parte Eur em valor numerico
-	MUL R2, 100						; Converte o valor do Euro para centimos
-	ADD R1, 1						; R1 passa a ter o apontador necessario para acedermos ao valor dos centimos
-	MOVB R4, [R0+R1]				; R4 agr possui o valor do preco do item da parte dos centimos
-	SUB R4, R3						; R4 possui o valor da conversao dos centimos de ASCII para um valor numerico
-	ADD R2, R4						; Agr R2 vai possuir o preco total do item com a adicao dos Eurs aos cents
-	MOV R5, Dinheiro_Inserido		; R5 vai possuir o endereco da memoria onde vai ter o valor do dinheiro inserido
-	MOV R6, [R5]					; R6 vai possuir o valor do dinheiro inseirdo
-	MOV R7, R2						; R7 vai possuir o valor de R2 para que R2 nao seja influenciado pela conta
-	CMP R6,	R7						; Comparamos Preco Total do Item com o Dinheiro inserido
-	JGE Troco 						; 
-	CALL Mostrar_ErrorDisp_Dinheiro	; Se o resultado da soma nao for 0 ou negativo vai mostrar um display em que nao foi inserido dinheiro sufeciente
+	PUSH R0							; Guarda o valor atual do R0 
+	PUSH R1							; Guarda o valor atual do R1 
+	MOV R0 , TOTAL_A_PAGAR
+	MOV R0 , [R0]					; R0 = total a pagar em centimos
+	MOV R1, TOTAL_INSERIDO			; R1 vai possuir o endereco da memoria onde vai ter o valor do dinheiro inserido
+	MOV R1, [R1]					; R1 vai possuir o valor do dinheiro inseirdo
+	CMP R1,	R0						; Comparamos Preco Total do Item com o Dinheiro inserido
+	JLT	ErroDinheiroInsuf			; Se Total inserido < total a pagar erro insuficiente
+	CALL Troco						; calcula o troco  ARG2 = BOOL = nao tem troco
+	JMP CalcularTroco_Fim_a			; salta para o final
+ErroDinheiroInsuf:
+	MOV R0 , ARG1 
+	MOV [R0] , 1					; ARG1 = true , dinheiro insuficiente	
+	JMP CalcularTroco_Fim
+CalcularTroco_Fim_a:
+	MOV R0 , ARG1 
+	MOV [R0] , 0					; ARG1 = false , dinheiro insuficiente	
+CalcularTroco_Fim:
+	POP R1							; busca o valor atual de R1 inicial
+	POP R0							; busca o valor atual de R0 inicial
+	RET
 
 ; Esta Rotina ira Calcular o troco (se suficiente) do stock para devolver ao cliente caso nao haja suficiente
 ; Caso haja suficiente ira mostrar um display de erro de que nao existe troco na maquina e ira cancelar a compra
 ; R7 agr e o resultado de troco a dar se possivel
 Troco:
-	SUB R7, R6						; Subtrai o Preco Total do Item pelo o Dinheiro Inserido
-	PUSH R0							;
-	PUSH R1							;
+	SUB R1, R0						; Subtrai o Dinheiro inserido pelo preco total dos items  R1 = troco a dar
 	PUSH R2							;
 	PUSH R3							;
 	PUSH R4							;
+	; numero de notas 5
 	MOV R0, Quantidade_Notas_500	; R0 tem o endereco da quantidade de stock de notas de 5
-	MOV R1,[R0]						; R1 tem o o valor da quantidade de stock
-	CALL While						; Executa o While Loop
-	; Guardamos a quantidade de Notas e verificamos
-	MOV R4, qt_5					; R4 tem o endereco da quantidade de Notas de 5
-	MOV [R4], R2					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
+	MOV R0,[R0]						; R0 tem o endereco do valor da quantidade em stock
+	MOV R2 , ARG1					; R2 = endereco do ARG1
+	MOV [R2] , R0					; ARG1 = endereco do valor da quantidade em stock de notas de 5
+	CALLF ConverterNumero2B			; result ARG1 = quantidade em stock de notas de 5
+	MOV R0 , [R2]					; R0 = quantidade em stock de notas de 5
+	MOV R4 , 500					; R4 = valor monetario
+	CALLF CalcolarQuantidade		; Calcula as notas necessarias
+	MOV R4, qt_5					; R4 tem o endereco da variavel que guarda a quantidade de Notas de 5
+	MOV [R4], R3					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
+	; numero de moedas de 2
 	MOV R0,Quantidade_Moedas_200	; R0 tem o endereco da quantidade de stock de moedas de 2
-	MOV R1,[R0]						; R1 tem o o valor da quantidade de stock
-	CALL While						; Executa o While Loop
-	; Guardamos a quantidade de moedas e verificamos
-	MOV R4, qt_2					; R4 tem o endereco da quantidade de moedas de 2
-	MOV [R4], R2					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
+	MOV R0,[R0]						; R1 tem o o valor da quantidade de stock
+	MOV [R2] , R0					; ARG1 = endereco do valor da quantidade em stock de moedas de 2
+	CALLF ConverterNumero2B			; result ARG1 = quantidade em stock de oedas de 2
+	MOV R0 , [R2]					; R0 = quantidade em stock de notas de 5
+	MOV R4 , 200					; R4 = valor monetario
+	CALLF CalcolarQuantidade		; Calcula as moedas necessarias
+	MOV R4, qt_2					; R4 tem o endereco da variavel que guarda a quantidade de moedas de 2
+	MOV [R4], R3					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
+	; numero de moedas de 1
 	MOV R0, Quantidade_Moedas_100	; R0 tem o endereco da quantidade de stock de moedas de 1
-	MOV R1,[R0]						; R1 tem o o valor da quantidade de stock
-	CALL While						; Executa o While Loop
-	; Guardamos a quantidade de moedas e verificamos
-	MOV R4, qt_1					; R4 tem o endereco da quantidade de moedas de 1
-	MOV [R4], R2					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
+	MOV R0,[R0]						; R1 tem o o valor da quantidade de stock
+	MOV [R2] , R0					; ARG1 = endereco do valor da quantidade em stock de moedas de 1
+	CALLF ConverterNumero2B			; result ARG1 = quantidade em stock de moedas de 1
+	MOV R0 , [R2]					; R0 = quantidade em stock de moedas de 1
+	MOV R4 , 100					; R4 = valor monetario
+	CALLF CalcolarQuantidade		; Calcula as moedas necessarias
+	MOV R4, qt_1					; R4 tem o endereco da variavel que guarda a quantidade de moedas de 1
+	MOV [R4], R3					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
+	; numero de moedas de 050
 	MOV R0, Quantidade_Moedas_050	; R0 tem o endereco da quantidade de stock de moedas de 050
 	MOV R1,[R0]						; R1 tem o o valor da quantidade de stock
-	CALL While						; Executa o While Loop
-	; Guardamos a quantidade de moedas e verificamos
-	MOV R4, qt_050					; R4 tem o endereco da quantidade de moedas de 050
-	MOV [R4], R2					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
+	MOV [R2] , R0					; ARG1 = endereco do valor da quantidade em stock de moedas de 1
+	CALLF ConverterNumero2B			; result ARG1 = quantidade em stock de moedas de 050
+	MOV R0 , [R2]					; R0 = quantidade em stock de moedas de 050
+	MOV R4 , 50						; R4 = valor monetario
+	CALLF CalcolarQuantidade		; Calcula as moedas necessarias
+	MOV R4, qt_050					; R4 tem o endereco da variavel que guarda a quantidade de moedas de 050
+	MOV [R4], R3					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
+	; numero de moedas de 020
 	MOV R0, Quantidade_Moedas_020	; R0 tem o endereco da quantidade de stock de moedas de 020
 	MOV R1,[R0]						; R1 tem o o valor da quantidade de stock
-	CALL While						; Executa o While Loop
-	; Guardamos a quantidade de moedas e verificamos
-	MOV R4, qt_020					; R4 tem o endereco da quantidade de moedas de 020
-	MOV [R4], R2					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
-	MOV R0, Quantidade_Moedas_020	; R0 tem o endereco da quantidade de stock de moedas de 020
+	CALLF ConverterNumero2B			; result ARG1 = quantidade em stock de moedas de 020
+	MOV R0 , [R2]					; R0 = quantidade em stock de moedas de 020
+	MOV R4 , 20						; R4 = valor monetario
+	CALLF CalcolarQuantidade		; Calcula as moedas necessarias
+	MOV R4, qt_020					; R4 tem o endereco da variavel que guarda a quantidade de moedas de 020
+	MOV [R4], R3					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
+	; numero de moedas de 010
+	MOV R0, Quantidade_Moedas_010	; R0 tem o endereco da quantidade de stock de moedas de 010
 	MOV R1,[R0]						; R1 tem o o valor da quantidade de stock
-	CALL While						; Executa o While Loop
-	; Guardamos a quantidade de moedas e verificamos
-	MOV R4, qt_010					; R4 tem o endereco da quantidade de moedas de 010
-	MOV [R4], R2					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
+	CALLF ConverterNumero2B			; result ARG1 = quantidade em stock de moedas de 010
+	MOV R0 , [R2]					; R0 = quantidade em stock de moedas de 010
+	MOV R4 , 10						; R4 = valor monetario
+	CALLF CalcolarQuantidade		; Calcula as moedas necessarias
+	MOV R4, qt_010					; R4 tem o endereco da variavel que guarda a quantidade de moedas de 010
+	MOV [R4], R3					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
 	; Verificacao se troco a pagar e igual a zero
-	CMP R7, 0						; Verificacao se troco a pagar e igual a zero
-	JNE Mostrar_ErrorDisp_Dinheiro	; Caso Falso Ira mostrar o display de Falta de Troco
-	JMP	Pagamento_Feito				; Salta para a rotina em que o pagamento foi executado com sucesso
-
-; R2 Quantidade
-; R3 valor monetario que vamos fazer a verificacao
-While:
-	CMP R1, R2						; Stock > quantidade que estamos a usar
-	JLT	End							; Caso falso termina
-	CMP R7,R3						; Troco a pagar > 500
-	JLT End							; Caso falso termina
-	SUB R7,R3						; Troco a pagar -500
-	ADD R2,1						; Quantidade do valor monetario +1
-	JMP While						; Executa o while denovo
-End:
+	CMP R1 , 0						; Verificacao se troco a pagar e igual a zero
+	MOV R0 , ARG2
+	JZ  Troco_Fim_a					; Caso Falso Ira mostrar o display de Falta de Troco
+	MOV R2 , 1						; R2 = True
+	JMP Troco_Fim
+Troco_Fim_a:
+	MOV R2 , 0						; R2 = False
+Troco_Fim:
+	MOV [R0] , R2					; ARG2 = BOOL = nao tem troco
+	POP R4
+	POP R3
+	POP R2
 	RET
+	
+; R0 Quantidade em Stock
+; R1 Troco
+; R4 valor monetario 
+; result R3 numero de moedas ou notas a usar R1 troco restante
+CalcolarQuantidade:
+	MOV R3 , 0
+CM_While:
+	CMP R0 , R3						; Stock > quantidade que estamos a usar
+	JLT	While_End					; Caso falso termina
+	CMP R1 , R4						; Troco a pagar > valor monetario
+	JLT While_End					; Caso falso termina
+	SUB R1 , R4						; Troco a pagar - valor monetario
+	ADD R3,1						; Quantidade do valor monetario +1
+	JMP CM_While					; Executa o while denovo ate nao ser posivel sub valor monetario ou acabar o stock 
+While_End:
+	RETF
 
-; Esta rotina ira servir para mostrar um display de erro em que o cliente nao inseriu dinheiro suficiente para efetuar a compra
-Mostrar_ErrorDisp_Dinheiro:
-	MOV R0, ARG1					;
-	MOV R1, ERRORDisplay_Dinheiro_Insuficiente;
-	MOV	[R0], R1					;
-	CALLF Mostrar_Display			;
 ; usado para determonar a pagina atual 
 ; ARG1 Size total
 Calcular_paginaAtual:
