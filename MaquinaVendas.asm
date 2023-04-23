@@ -9,7 +9,7 @@
 	Stock:
 		;Chocolate branco 1
 		STRING "Cho. Branco"		;Nome
-		STRING "   40"				;Quantidade
+		STRING "   02"				;Quantidade
 		STRING '1'					;Preco Euros
 		STRING "90"					;Preco Cent
 		STRING ' '
@@ -172,8 +172,8 @@
 		;SMOLL 13
 		STRING "Sumol      "		;Nome
 		STRING "   24"				;Quantidade
-		STRING '1'					;Preco Euros
-		STRING "50"					;Preco Cent
+		STRING '0'					;Preco Euros
+		STRING "40"					;Preco Cent
 		STRING ' '
 	
 	Stock_Dineiro:
@@ -181,7 +181,7 @@
 		STRING "Moeda10Cent"		;Nome
 		STRING "   "
 		Quantidade_Moedas_010:
-		STRING "80"					;Quantidade
+		STRING "10"					;Quantidade
 		STRING '0'					;Preco Euros
 		STRING "10"					;Preco Cent
 		STRING ' '
@@ -208,7 +208,7 @@
 		STRING "Moeda 1Euro"		;Nome
 		STRING "   "
 		Quantidade_Moedas_100:
-		STRING "73"					;Quantidade
+		STRING "53"					;Quantidade
 		STRING '1'					;Preco Euros
 		STRING "00"					;Preco Cent
 		STRING ' '
@@ -226,7 +226,7 @@
 		STRING "Nota 5Euros"		;Nome
 		STRING "   "
 		Quantidade_Notas_500:
-		STRING "10"					;Quantidade
+		STRING "20"					;Quantidade
 		STRING '5'					;Preco Euros
 		STRING "00"					;Preco Cent
 		STRING ' '
@@ -425,7 +425,7 @@
 	ERRORDisplay_SemStock:
 		STRING "----------------";
 		STRING " A Maquina nao  ";
-		STRING "tem X em Stock !";
+		STRING " tem em stock ! ";
 		STRING "----------------";
 		STRING "                ";
 		STRING "1>Tentar de novo";
@@ -994,7 +994,7 @@ MostrarQ_Avaliar:
 	MOV [R0] , R3					; ARG1 = R3
 	CALLF ConverterNumero2B		
 	MOV R2 , [R0]					; R2 = ARG1 = quantidade em stock do item
-	CMP R2 , R4
+	CMP R2 , R4						; R2 >= Quantidade inserida
 	JLT MostrarQ_Erro				; se a quantidade em stock for menor 
 	MOV R2 , QUANTIDADE_DE_ITEMS
 	MOV [R2] , R4
@@ -1006,8 +1006,6 @@ MQ_Fim:
 	POP R0
 	RET
 MostrarQ_Erro:
-	MOV R1 , ERRORDisplay_SemStock_X
-	MOVB [R1] , R4					; X na pagina de erro = valor introduzido na quantidade
 	MOV R1 , ERRORDisplay_SemStock
 	MOV [R0] , R1						
 	CALLF Mostrar_Display
@@ -1142,11 +1140,11 @@ Inserir_Checktroco:
 	MOV R0 , [R0]					
 	CMP R0 , 1						; nao tem troco ?
 	JNZ Inserir_Check_Comtinuar		; se tem troco salta para mostrar o display
+Inserir_OPTN_SemTroco:
 	MOV R0 , ARG1
 	MOV R1 , ERRORDisplay_Dinehrio_TrocoInvalido 
 	MOV [R0] , R1					; ARG1 = endereco do display
 	CALLF Mostrar_Display			; mostra o display;
-Inserir_Input:
 	CALL LerInput
 	MOV R0 , PER_EN_VALOR
 	MOV R0 , [R0]					; R0 = OPTN
@@ -1171,7 +1169,7 @@ Inserir_OPN_Error:
 	MOV R0 , ARG1
 	MOV [R0] , R1					; ARG1 = max = 1
 	CALL Mostrar_ErrorDisplay_OPTN
-	JMP Inserir_Input
+	JMP Inserir_OPTN_SemTroco
 Inserir_Fim:
 	POP R5
 	POP R4 
@@ -1963,6 +1961,8 @@ Troco_Fim:
 CalcularQuantidade:
 	MOV R3 , 0
 CM_While:
+	CMP R0 , 0
+	JZ  While_End					; se o stock = 0
 	CMP R0 , R3						; Stock > quantidade que estamos a usar
 	JLT	While_End					; Caso falso termina
 	CMP R1 , R4						; Troco a pagar > valor monetario
@@ -2012,6 +2012,7 @@ Pagamento_Feito:
 	MOV R1, Quantidade_Moedas_010	; R1 vai possuir o endereco da quantidade do Stock Monetario
 	CALL Pagamento_Alteracao_Stock 
 	MOV R0 , ITEM_A_COMPRAR ; testar
+	MOV R0 , [R0]
 	MOV R1 , 14
 	ADD R1 , R0						; R1 aponta para a quantidade do item em stock
 	MOV R0 , QUANTIDADE_DE_ITEMS
