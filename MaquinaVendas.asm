@@ -1138,13 +1138,13 @@ Inserir_Continuar:
 	CALL Mostrar_ERRORDisplay_Dinheiro_Insuficiente
 	JMP InserirMostrarDisplay
 Inserir_Checktroco:
-	MOV R0 , ARG2
+	MOV R0 , ARG2 ;ver isto
 	MOV R0 , [R0]					
 	CMP R0 , 1						; nao tem troco ?
 	JNZ Inserir_Check_Comtinuar		; se tem troco salta para mostrar o display
 	MOV R0 , ARG1
-	MOV R1 , ERRORDisplay_Dinehrio_TrocoInvalido ; ARG1 = endereco do display
-	MOV [R0] , R1
+	MOV R1 , ERRORDisplay_Dinehrio_TrocoInvalido 
+	MOV [R0] , R1					; ARG1 = endereco do display
 	CALLF Mostrar_Display			; mostra o display;
 Inserir_Input:
 	CALL LerInput
@@ -1154,6 +1154,8 @@ Inserir_Input:
 	JNZ Inserir_Input2
 	MOV R1 , TOTAL_A_PAGAR
 	MOV [R1] , R0					; TOTAL_A_PAGAR = 0
+	MOV R1 , QUANTIDADE_DE_ITEMS
+	MOV [R1] , R0					; QUANTIDADE_DE_ITEMS = 0
 	CALL CalcularTroco				; ARG1 = BOOL = dinheiro insuficiente , ARG2 = BOOL = nao tem troco
 	JMP Inserir_Check_Comtinuar
 Inserir_Input2:
@@ -1198,7 +1200,7 @@ Mostrar_Talao:
 	MOV R0 , Display2Line
 	MOV [R3] ,R0					; ARG2 = Linha a Escrever posisao inicial
 	MOV R1 , ARG3
-	MOV R0 , -16
+	MOV R0 , 14    					; ou - 16 branco   depois é somado 48 na fucao Completar_Linha_NomePreco
 	MOV [R1] , R0					; ARG3 = numero do item
 	CALLF Completar_Linha_NomePreco
 	MOV R3 , Display3Line
@@ -2009,6 +2011,20 @@ Pagamento_Feito:
 	MOV R0, qt_010					; R0 vai possuir o endereco da quantidade a devolver para o troco e remover
 	MOV R1, Quantidade_Moedas_010	; R1 vai possuir o endereco da quantidade do Stock Monetario
 	CALL Pagamento_Alteracao_Stock 
+	MOV R0 , ITEM_A_COMPRAR ; testar
+	MOV R1 , 14
+	ADD R1 , R0						; R1 aponta para a quantidade do item em stock
+	MOV R0 , QUANTIDADE_DE_ITEMS
+	MOV R0 , [R0]					; R0 = quantidade de items comprados
+	MOV R2 , ARG1
+	MOV [R2] , R1					; ARG1 aponta para a quantidade do item em stock
+	CALLF ConverterNumero2B
+	MOV R3 , [R2]					; R3 = numero em stock
+	SUB R3 , R0
+	MOV [R2] , R3					; ARG1 = numero atualizado
+	MOV R2 , ARG2
+	MOV [R2] , R1					; ARG2 aponta para a quantidade do item em stock
+	CALLF ColocarNumero2B 			; Atualiza no stock
 	CALLF ResetVarsQT_
 	POP R3
 	POP R2
@@ -2030,7 +2046,6 @@ Pagamento_Alteracao_Stock:
 	MOV [R3] , R1					; ARG2 = endereco de onde colocar
 	CALLF ColocarNumero2B
 	RET
-	
 	
 ; Vai alterar a quantidade de Stock Monetario addicionando o inserido
 ; Vai mostrar o display do Talao
