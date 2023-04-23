@@ -9,7 +9,7 @@
 	Stock:
 		;Chocolate branco 1
 		STRING "Cho. Branco"		;Nome
-		STRING "   40"				;Quantidade
+		STRING "   02"				;Quantidade
 		STRING '1'					;Preco Euros
 		STRING "90"					;Preco Cent
 		STRING ' '
@@ -172,8 +172,8 @@
 		;SMOLL 13
 		STRING "Sumol      "		;Nome
 		STRING "   24"				;Quantidade
-		STRING '1'					;Preco Euros
-		STRING "50"					;Preco Cent
+		STRING '0'					;Preco Euros
+		STRING "40"					;Preco Cent
 		STRING ' '
 	
 	Stock_Dineiro:
@@ -181,7 +181,7 @@
 		STRING "Moeda10Cent"		;Nome
 		STRING "   "
 		Quantidade_Moedas_010:
-		STRING "99"					;Quantidade
+		STRING "10"					;Quantidade
 		STRING '0'					;Preco Euros
 		STRING "10"					;Preco Cent
 		STRING ' '
@@ -208,8 +208,8 @@
 		STRING "Moeda 1Euro"		;Nome
 		STRING "   "
 		Quantidade_Moedas_100:
-		STRING "73"					;Quantidade
-		STRING '0'					;Preco Euros
+		STRING "53"					;Quantidade
+		STRING '1'					;Preco Euros
 		STRING "00"					;Preco Cent
 		STRING ' '
 		
@@ -226,7 +226,7 @@
 		STRING "Nota 5Euros"		;Nome
 		STRING "   "
 		Quantidade_Notas_500:
-		STRING "10"					;Quantidade
+		STRING "20"					;Quantidade
 		STRING '5'					;Preco Euros
 		STRING "00"					;Preco Cent
 		STRING ' '
@@ -357,11 +357,11 @@
 	
 	;mostrado quando complatada a compra
 	Place 2700H	
-	Display_OPN_Pages:
+	Display_Talao:
 		STRING "---- Talao  ----";
-		STRING "				"; nome do item
-		STRING "Preco:			";
-		STRING "Total:		    ";
+		STRING "                "; nome do item
+		STRING "Quantidade:     ";
+		STRING "Total:          ";
 		STRING "Troco:          ";
 		STRING "----------------";
 		STRING "OK>Continuar    ";
@@ -425,7 +425,7 @@
 	ERRORDisplay_SemStock:
 		STRING "----------------";
 		STRING " A Maquina nao  ";
-		STRING "tem X em Stock !";
+		STRING " tem em stock ! ";
 		STRING "----------------";
 		STRING "                ";
 		STRING "1>Tentar de novo";
@@ -494,9 +494,7 @@
 		ARG5: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
 		ARG6: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
 		ARG7: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
-		
-		gggggst EQU 5000H;dsa
-		
+				
 		PLACE 5010H
 		Senha : 								; variavel guarda a senha do stock
 			STRING "M@q2!Ve#"
@@ -506,19 +504,13 @@
 		QUANTIDADE_DE_ITEMS:	WORD 0			; variavel para a quantidade de items a comprar
 		TOTAL_A_PAGAR: WORD 0					; variavel para a guardar o total a pagar
 		TOTAL_INSERIDO:	WORD 0					; variavel para o total inserido em centimos
+		TROCO_A_DAR: WORD 0						; variavel para o troco a dar em centimos
 		qt_010 : WORD 0							; variavel guarda as moedas 10 centimos 
 		qt_020 : WORD 0							; variavel guarda as moedas 20 centimos 
 		qt_050 : WORD 0							; variavel guarda as moedas 50 centimos 
 		qt_1 : WORD 0							; variavel guarda as moedas 1 euro
 		qt_2 : WORD 0							; variavel guarda as moedas 2 euro
 		qt_5 : WORD 0							; variavel guarda as notas 5 euro
-
-		qt_5: 			WORD 0					; Quantidade de Notas de 5 que vamos usar do stock
-		qt_2: 			WORD 0					; Quantidade de moedas de 2 que vamos usar do stock
-		qt_1: 			WORD 0					; Quantidade de moedas de 1 que vamos usar do stock
-		qt_050:			WORD 0					; Quantidade de moedas de 050 que vamos usar do stock
-		qt_020:			WORD 0					; Quantidade de moedas de 020 que vamos usar do stock
-		qt_010:			WORD 0 					; Quantidade de moedas de 010 que vamos usar do stock
 	;--------------------------------------------------------------------------------------------------------------------------------
 	;													Display
 	;--------------------------------------------------------------------------------------------------------------------------------
@@ -1000,7 +992,7 @@ MostrarQ_Avaliar:
 	MOV [R0] , R3					; ARG1 = R3
 	CALLF ConverterNumero2B		
 	MOV R2 , [R0]					; R2 = ARG1 = quantidade em stock do item
-	CMP R2 , R4
+	CMP R2 , R4						; R2 >= Quantidade inserida
 	JLT MostrarQ_Erro				; se a quantidade em stock for menor 
 	MOV R2 , QUANTIDADE_DE_ITEMS
 	MOV [R2] , R4
@@ -1012,8 +1004,6 @@ MQ_Fim:
 	POP R0
 	RET
 MostrarQ_Erro:
-	MOV R1 , ERRORDisplay_SemStock_X
-	MOVB [R1] , R4					; X na pagina de erro = valor introduzido na quantidade
 	MOV R1 , ERRORDisplay_SemStock
 	MOV [R0] , R1						
 	CALLF Mostrar_Display
@@ -1135,9 +1125,6 @@ Inserir_ErroOPTN:
 Inserir_Continuar:
 	MOV R0 , TOTAL_INSERIDO			; R0 = endereco de TOTAL_INSERIDO
 	MOV [R0] , R3					; TOTAL_INSERIDO = R3
-	MOV R1 , ARG1
-	MOV R0 , 1						; ARG1 = 1 = Add ao stock qt_...
-	MOV [R1] , R0					; TOTAL_A_PAGAR = 0
 	CALL AtualizarStock
 	CALL CalcularTroco				; ARG1 = BOOL = dinheiro insuficiente , ARG2 = BOOL = nao tem troco
 	MOV R0 , ARG1
@@ -1145,51 +1132,124 @@ Inserir_Continuar:
 	CMP R0 , 1						; dinheiro insuficiente ?
 	JNZ Inserir_Checktroco		   ; pede mais dinehiro
 	CALL Mostrar_ERRORDisplay_Dinheiro_Insuficiente
-	JMP Inserir
+	JMP InserirMostrarDisplay
 Inserir_Checktroco:
-	MOV R0 , ARG2
+	MOV R0 , ARG2 ;ver isto
 	MOV R0 , [R0]					
 	CMP R0 , 1						; nao tem troco ?
-	JNZ Inserir_talao				; se tem troco salta para mostrar o display
+	JNZ Inserir_Check_Comtinuar		; se tem troco salta para mostrar o display
+Inserir_OPTN_SemTroco:
 	MOV R0 , ARG1
-	MOV R1 , ERRORDisplay_Dinehrio_TrocoInvalido ; ARG1 = endereco do display
-	MOV [R0] , R1
-	CALLF Mostrar_Display			; mostra o display
-Inserir_Input:
+	MOV R1 , ERRORDisplay_Dinehrio_TrocoInvalido 
+	MOV [R0] , R1					; ARG1 = endereco do display
+	CALLF Mostrar_Display			; mostra o display;
 	CALL LerInput
 	MOV R0 , PER_EN_VALOR
 	MOV R0 , [R0]					; R0 = OPTN
 	CMP R0 , 0						; Devolver ?
-	JNZ Inserir_Check_Comtinuar
+	JNZ Inserir_Input2
 	MOV R1 , TOTAL_A_PAGAR
 	MOV [R1] , R0					; TOTAL_A_PAGAR = 0
+	MOV R1 , QUANTIDADE_DE_ITEMS
+	MOV [R1] , R0					; QUANTIDADE_DE_ITEMS = 0
 	CALL CalcularTroco				; ARG1 = BOOL = dinheiro insuficiente , ARG2 = BOOL = nao tem troco
-	MOV R1 , ARG1
-	MOV R0 , 1						; ARG1 = 1 = subrair ao stock qt_...
-	CALL AtualizarStock
-	JMP Inserir_Fim
-Inserir_Check_Comtinuar:
+	JMP Inserir_Check_Comtinuar
+Inserir_Input2:
 	CMP R0 , 1						; Continuar ?
 	JNZ Inserir_OPN_Error
-	CALL Mostrar_talao
-	CALL ResetVars  ; item ,quantidade, ... total a zero
+Inserir_Check_Comtinuar:
+	CALL Pagamento_Feito
+	CALL Mostrar_Talao
+	CALLF ResetCompra  			; item ,quantidade, ... total a zero
 	JMP Inserir_Fim
 Inserir_OPN_Error:
 	MOV R1 , 1
 	MOV R0 , ARG1
 	MOV [R0] , R1					; ARG1 = max = 1
 	CALL Mostrar_ErrorDisplay_OPTN
-	JMP Inserir_Input
+	JMP Inserir_OPTN_SemTroco
 Inserir_Fim:
+	POP R5
 	POP R4 
 	POP R3
 	POP R2
 	POP R1
 	POP R0
 	RET
-	
+
+; rotina usada para mostrar o talao
 Mostrar_Talao:
-	Ret
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	PUSH R3
+	PUSH R4
+	MOV R0 , Display_Talao
+	MOV R1 , ARG1
+	MOV [R1] , R0			
+	CALLF Mostrar_Display			; mostra o display
+	MOV R0 , ITEM_A_COMPRAR
+	MOV R0 , [R0]					; R0 = endereco do item a comprar
+	MOV R3 , ARG1 	
+	MOV [R3] , R0					; ARG1 = Endereco do Item
+	MOV R3 , ARG2
+	MOV R0 , Display2Line
+	MOV [R3] ,R0					; ARG2 = Linha a Escrever posisao inicial
+	MOV R1 , ARG3
+	MOV R0 , 14    					; ou - 16 branco   depois é somado 48 na fucao Completar_Linha_NomePreco
+	MOV [R1] , R0					; ARG3 = numero do item
+	CALLF Completar_Linha_NomePreco
+	MOV R3 , Display3Line
+	MOV R0 , 11
+	ADD R3 , R0
+	MOV R1 , QUANTIDADE_DE_ITEMS	
+	MOV R1 , [R1]					; R1 = quantidade de items
+	MOV R2 , 48
+	ADD R1 , R2						; R1 para carater
+	MOVB [R3] , R1					; Escreve o CaraterAsterisco
+	MOV R1 , ARG1					; escrever total e troco
+	MOV R2 , ARG2
+	MOV R3 , TOTAL_A_PAGAR
+	MOV R3 , [R3]					; R3 = TOTAL_A_PAGAR
+	MOV [R1] , R3 					; ARG1 = preco
+	MOV R0 , Display4Line
+	ADD R0 , 6						; avanva para depois dos :
+	MOV [R2] , R0					; ARG2 = endereco a colocar o total
+	CALLF Colocar_preco 
+	MOV R3 , TROCO_A_DAR
+	MOV R3 , [R3]					; R3 = TROCO_A_DAR
+	MOV [R1] , R3 					; ARG1 = preco
+	MOV R0 , Display5Line
+	ADD R0 , 6						; avanva para depois dos :
+	MOV [R2] , R0					; ARG2 = endereco a colocar o total
+	CALLF Colocar_preco 
+	CALL LerInput
+	POP R4
+	POP R3
+	POP R2
+	POP R1
+	POP R0
+	RET
+
+; rotina usada para colocar a zero as variaveis utilizadas numa compra
+ResetCompra:
+	PUSH R0
+	PUSH R1
+	MOV R1 , 0						; R1 = 0
+	MOV R0 , ITEM_A_COMPRAR
+	MOV [R0] , R1					; ITEM_A_COMPRAR = 0
+	MOV R1 , 0						; R1 = 0
+	MOV R0 , QUANTIDADE_DE_ITEMS
+	MOV [R0] , R1					; ITEM_A_COMPRAR = 0
+	MOV R1 , 0						; R1 = 0
+	MOV R0 , TOTAL_A_PAGAR
+	MOV [R0] , R1					; ITEM_A_COMPRAR = 0
+	MOV R1 , 0						; R1 = 0
+	MOV R0 , TOTAL_INSERIDO
+	MOV [R0] , R1					; ITEM_A_COMPRAR = 0
+	POP R1
+	POP R0
+	RETF
 
 ;--------------------------------------------------------------------------------------------------------------------------------
 ;											Rotinas dos perifericos 
@@ -1655,11 +1715,12 @@ Mostrar_ErrorDisplay_OPTN_Ler:
 	RET								; termina a rotina
 	
 ; rotina usada para mostrar pagina de erro Dinheiro_Insuficiente;
-Mostrar_ERRORDisplay_Dinheiro_Insuficiente
+Mostrar_ERRORDisplay_Dinheiro_Insuficiente:
 	PUSH R0
 	PUSH R1
 	MOV R0 , ARG1
 	MOV R1 , ERRORDisplay_Dinheiro_Insuficiente	; ARG1 = endereco do Display
+	MOV [R0] , R1
 	CALLF Mostrar_Display			; Mostra o Display
 	CALL LerInput					; pede ok
 	POP R1
@@ -1799,11 +1860,13 @@ CalcularTroco:
 	JMP CalcularTroco_Fim_a			; salta para o final
 ErroDinheiroInsuf:
 	MOV R0 , ARG1 
-	MOV [R0] , 1					; ARG1 = true , dinheiro insuficiente	
+	MOV R1 , 1
+	MOV [R0] , R1					; ARG1 = true , dinheiro insuficiente	
 	JMP CalcularTroco_Fim
 CalcularTroco_Fim_a:
 	MOV R0 , ARG1 
-	MOV [R0] , 0					; ARG1 = false , dinheiro insuficiente	
+	MOV R1 , 0
+	MOV [R0] , R1					; ARG1 = false , dinheiro insuficiente	
 CalcularTroco_Fim:
 	POP R1							; busca o valor atual de R1 inicial
 	POP R0							; busca o valor atual de R0 inicial
@@ -1814,66 +1877,64 @@ CalcularTroco_Fim:
 ; R7 agr e o resultado de troco a dar se possivel
 Troco:
 	SUB R1, R0						; Subtrai o Dinheiro inserido pelo preco total dos items  R1 = troco a dar
+	MOV R0 , TROCO_A_DAR		
+	MOV [R0] , R1					; TROCO_A_DAR = troco
 	PUSH R2							;
 	PUSH R3							;
 	PUSH R4							;
 	; numero de notas 5
 	MOV R0, Quantidade_Notas_500	; R0 tem o endereco da quantidade de stock de notas de 5
-	MOV R0,[R0]						; R0 tem o endereco do valor da quantidade em stock
 	MOV R2 , ARG1					; R2 = endereco do ARG1
 	MOV [R2] , R0					; ARG1 = endereco do valor da quantidade em stock de notas de 5
 	CALLF ConverterNumero2B			; result ARG1 = quantidade em stock de notas de 5
 	MOV R0 , [R2]					; R0 = quantidade em stock de notas de 5
 	MOV R4 , 500					; R4 = valor monetario
-	CALLF CalcolarQuantidade		; Calcula as notas necessarias
+	CALLF CalcularQuantidade		; Calcula as notas necessarias
 	MOV R4, qt_5					; R4 tem o endereco da variavel que guarda a quantidade de Notas de 5
 	MOV [R4], R3					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
 	; numero de moedas de 2
 	MOV R0,Quantidade_Moedas_200	; R0 tem o endereco da quantidade de stock de moedas de 2
-	MOV R0,[R0]						; R1 tem o o valor da quantidade de stock
 	MOV [R2] , R0					; ARG1 = endereco do valor da quantidade em stock de moedas de 2
 	CALLF ConverterNumero2B			; result ARG1 = quantidade em stock de oedas de 2
-	MOV R0 , [R2]					; R0 = quantidade em stock de notas de 5
+	MOV R0 , [R2]					; R0 = quantidade em stock de notas de 2
 	MOV R4 , 200					; R4 = valor monetario
-	CALLF CalcolarQuantidade		; Calcula as moedas necessarias
+	CALLF CalcularQuantidade		; Calcula as moedas necessarias
 	MOV R4, qt_2					; R4 tem o endereco da variavel que guarda a quantidade de moedas de 2
 	MOV [R4], R3					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
 	; numero de moedas de 1
 	MOV R0, Quantidade_Moedas_100	; R0 tem o endereco da quantidade de stock de moedas de 1
-	MOV R0,[R0]						; R1 tem o o valor da quantidade de stock
 	MOV [R2] , R0					; ARG1 = endereco do valor da quantidade em stock de moedas de 1
 	CALLF ConverterNumero2B			; result ARG1 = quantidade em stock de moedas de 1
 	MOV R0 , [R2]					; R0 = quantidade em stock de moedas de 1
 	MOV R4 , 100					; R4 = valor monetario
-	CALLF CalcolarQuantidade		; Calcula as moedas necessarias
+	CALLF CalcularQuantidade		; Calcula as moedas necessarias
 	MOV R4, qt_1					; R4 tem o endereco da variavel que guarda a quantidade de moedas de 1
 	MOV [R4], R3					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
 	; numero de moedas de 050
 	MOV R0, Quantidade_Moedas_050	; R0 tem o endereco da quantidade de stock de moedas de 050
-	MOV R1,[R0]						; R1 tem o o valor da quantidade de stock
 	MOV [R2] , R0					; ARG1 = endereco do valor da quantidade em stock de moedas de 1
 	CALLF ConverterNumero2B			; result ARG1 = quantidade em stock de moedas de 050
 	MOV R0 , [R2]					; R0 = quantidade em stock de moedas de 050
 	MOV R4 , 50						; R4 = valor monetario
-	CALLF CalcolarQuantidade		; Calcula as moedas necessarias
+	CALLF CalcularQuantidade		; Calcula as moedas necessarias
 	MOV R4, qt_050					; R4 tem o endereco da variavel que guarda a quantidade de moedas de 050
 	MOV [R4], R3					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
 	; numero de moedas de 020
 	MOV R0, Quantidade_Moedas_020	; R0 tem o endereco da quantidade de stock de moedas de 020
-	MOV R1,[R0]						; R1 tem o o valor da quantidade de stock
+	MOV [R2] , R0					; ARG1 = endereco do valor da quantidade em stock de moedas de 1
 	CALLF ConverterNumero2B			; result ARG1 = quantidade em stock de moedas de 020
 	MOV R0 , [R2]					; R0 = quantidade em stock de moedas de 020
 	MOV R4 , 20						; R4 = valor monetario
-	CALLF CalcolarQuantidade		; Calcula as moedas necessarias
+	CALLF CalcularQuantidade		; Calcula as moedas necessarias
 	MOV R4, qt_020					; R4 tem o endereco da variavel que guarda a quantidade de moedas de 020
 	MOV [R4], R3					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
 	; numero de moedas de 010
 	MOV R0, Quantidade_Moedas_010	; R0 tem o endereco da quantidade de stock de moedas de 010
-	MOV R1,[R0]						; R1 tem o o valor da quantidade de stock
+	MOV [R2] , R0					; ARG1 = endereco do valor da quantidade em stock de moedas de 1
 	CALLF ConverterNumero2B			; result ARG1 = quantidade em stock de moedas de 010
 	MOV R0 , [R2]					; R0 = quantidade em stock de moedas de 010
 	MOV R4 , 10						; R4 = valor monetario
-	CALLF CalcolarQuantidade		; Calcula as moedas necessarias
+	CALLF CalcularQuantidade		; Calcula as moedas necessarias
 	MOV R4, qt_010					; R4 tem o endereco da variavel que guarda a quantidade de moedas de 010
 	MOV [R4], R3					; Atualizamos o valor na memoria do endereco com a quantidade que usamos
 	; Verificacao se troco a pagar e igual a zero
@@ -1895,9 +1956,11 @@ Troco_Fim:
 ; R1 Troco
 ; R4 valor monetario 
 ; result R3 numero de moedas ou notas a usar R1 troco restante
-CalcolarQuantidade:
+CalcularQuantidade:
 	MOV R3 , 0
 CM_While:
+	CMP R0 , 0
+	JZ  While_End					; se o stock = 0
 	CMP R0 , R3						; Stock > quantidade que estamos a usar
 	JLT	While_End					; Caso falso termina
 	CMP R1 , R4						; Troco a pagar > valor monetario
@@ -1921,46 +1984,142 @@ Pagamento_Feito:
 	PUSH R0							; Guarda o valor atual do R0
 	PUSH R1							; Guarda o valor atual do R1
 	PUSH R2							; Guarda o valor atual do R2
+	PUSH R3							; Guarda o valor atual do R3
+	;notas de 5
 	MOV R0, qt_5					; R0 vai possuir o endereco da quantidade a devolver para o troco e remover
-	MOV R0, [R0]					; R0 vai possuir o valor da quantidade a devolver para o troco e remover
 	MOV R1, Quantidade_Notas_500	; R1 vai possuir o endereco da quantidade do Stock Monetario
-	MOV R2, [R1]					; R2 vai possuir o valor da quantidade do Stock Monetario 
-	SUB R2, R0						; Subtrai o Quantiadade do Stock Monetario pelo Quantidade a 
-	MOV [R1], R2					; Altera na memoria a quantidade atual
+	CALL Pagamento_Alteracao_Stock 
+	;notas de 5
 	MOV R0, qt_2					; R0 vai possuir o endereco da quantidade a devolver para o troco e remover
-	MOV R0, [R0]					; R0 vai possuir o valor da quantidade a devolver para o troco e remover
 	MOV R1, Quantidade_Moedas_200	; R1 vai possuir o endereco da quantidade do Stock Monetario
-	MOV R2, [R1]					; R2 vai possuir o valor da quantidade do Stock Monetario 
-	SUB R2, R0						; Subtrai o Quantiadade do Stock Monetario pelo Quantidade a 
-	MOV [R1], R2					; Altera na memoria a quantidade atual
+	CALL Pagamento_Alteracao_Stock 
+	;notas de 5
 	MOV R0, qt_1					; R0 vai possuir o endereco da quantidade a devolver para o troco e remover
-	MOV R0, [R0]					; R0 vai possuir o valor da quantidade a devolver para o troco e remover
 	MOV R1, Quantidade_Moedas_100	; R1 vai possuir o endereco da quantidade do Stock Monetario
-	MOV R2, [R1]					; R2 vai possuir o valor da quantidade do Stock Monetario 
-	SUB R2, R0						; Subtrai o Quantiadade do Stock Monetario pelo Quantidade a 
-	MOV [R1], R2					; Altera na memoria a quantidade atual
+	CALL Pagamento_Alteracao_Stock 
+	;notas de 5
 	MOV R0, qt_050					; R0 vai possuir o endereco da quantidade a devolver para o troco e remover
-	MOV R0, [R0]					; R0 vai possuir o valor da quantidade a devolver para o troco e remover
 	MOV R1, Quantidade_Moedas_050	; R1 vai possuir o endereco da quantidade do Stock Monetario
-	MOV R2, [R1]					; R2 vai possuir o valor da quantidade do Stock Monetario 
-	SUB R2, R0						; Subtrai o Quantiadade do Stock Monetario pelo Quantidade a 
-	MOV [R1], R2					; Altera na memoria a quantidade atual
-	MOV R0, qt_0200					; R0 vai possuir o endereco da quantidade a devolver para o troco e remover
-	MOV R0, [R0]					; R0 vai possuir o valor da quantidade a devolver para o troco e remover
+	CALL Pagamento_Alteracao_Stock 
+	;notas de 5
+	MOV R0, qt_020					; R0 vai possuir o endereco da quantidade a devolver para o troco e remover
 	MOV R1, Quantidade_Moedas_020	; R1 vai possuir o endereco da quantidade do Stock Monetario
-	MOV R2, [R1]					; R2 vai possuir o valor da quantidade do Stock Monetario 
-	SUB R2, R0						; Subtrai o Quantiadade do Stock Monetario pelo Quantidade a 
-	MOV [R1], R2					; Altera na memoria a quantidade atual
+	CALL Pagamento_Alteracao_Stock 
+	;notas de 5
 	MOV R0, qt_010					; R0 vai possuir o endereco da quantidade a devolver para o troco e remover
-	MOV R0, [R0]					; R0 vai possuir o valor da quantidade a devolver para o troco e remover
 	MOV R1, Quantidade_Moedas_010	; R1 vai possuir o endereco da quantidade do Stock Monetario
-	MOV R2, [R1]					; R2 vai possuir o valor da quantidade do Stock Monetario 
-	SUB R2, R0						; Subtrai o Quantiadade do Stock Monetario pelo Quantidade a 
-	MOV [R1], R2					; Altera na memoria a quantidade atual
-	POP R0							;
-	POP R1							;
-	POP R2							;
-	; Depois da alteracao feita no Stock Monetario so falta mostrar o display do Talao
+	CALL Pagamento_Alteracao_Stock 
+	MOV R0 , ITEM_A_COMPRAR ; testar
+	MOV R0 , [R0]
+	MOV R1 , 14
+	ADD R1 , R0						; R1 aponta para a quantidade do item em stock
+	MOV R0 , QUANTIDADE_DE_ITEMS
+	MOV R0 , [R0]					; R0 = quantidade de items comprados
+	MOV R2 , ARG1
+	MOV [R2] , R1					; ARG1 aponta para a quantidade do item em stock
+	CALLF ConverterNumero2B
+	MOV R3 , [R2]					; R3 = numero em stock
+	SUB R3 , R0
+	MOV [R2] , R3					; ARG1 = numero atualizado
+	MOV R2 , ARG2
+	MOV [R2] , R1					; ARG2 aponta para a quantidade do item em stock
+	CALLF ColocarNumero2B 			; Atualiza no stock
+	CALLF ResetVarsQT_
+	POP R3
+	POP R2
+	POP R1
+	POP R0
+	RET
+
+; R0 = qt_...
+; R1 = Quantidade_Notas_...
+Pagamento_Alteracao_Stock:
+	MOV R0, [R0]					; R0 vai possuir o valor da quantidade a devolver para o troco e remover
+	MOV R2 , ARG1
+	MOV [R2] , R1					; ARG1 = endereco de onde esta o numero a converter
+	CALLF ConverterNumero2B
+	MOV R3 , [R2]					; R1 = Quantidade_Notas_500
+	SUB R3 , R0
+	MOV [R2] , R3					; ARG1 = numero atualizado
+	MOV R3 , ARG2
+	MOV [R3] , R1					; ARG2 = endereco de onde colocar
+	CALLF ColocarNumero2B
+	RET
+	
+; Vai alterar a quantidade de Stock Monetario addicionando o inserido
+; Vai mostrar o display do Talao
+AtualizarStock:
+	PUSH R0							; Guarda o valor atual do R0
+	PUSH R1							; Guarda o valor atual do R1
+	PUSH R2							; Guarda o valor atual do R2
+	PUSH R3							; Guarda o valor atual do R3
+	;notas de 5
+	MOV R0, qt_5					; R0 vai possuir o endereco da quantidade a devolver para o troco e remover
+	MOV R1, Quantidade_Notas_500	; R1 vai possuir o endereco da quantidade do Stock Monetario
+	CALL AtualizarStock_Alteracao_Stock 
+	;notas de 5
+	MOV R0, qt_2					; R0 vai possuir o endereco da quantidade a devolver para o troco e remover
+	MOV R1, Quantidade_Moedas_200	; R1 vai possuir o endereco da quantidade do Stock Monetario
+	CALL AtualizarStock_Alteracao_Stock 
+	;notas de 5
+	MOV R0, qt_1					; R0 vai possuir o endereco da quantidade a devolver para o troco e remover
+	MOV R1, Quantidade_Moedas_100	; R1 vai possuir o endereco da quantidade do Stock Monetario
+	CALL AtualizarStock_Alteracao_Stock 
+	;notas de 5
+	MOV R0, qt_050					; R0 vai possuir o endereco da quantidade a devolver para o troco e remover
+	MOV R1, Quantidade_Moedas_050	; R1 vai possuir o endereco da quantidade do Stock Monetario
+	CALL AtualizarStock_Alteracao_Stock 
+	;notas de 5
+	MOV R0, qt_020					; R0 vai possuir o endereco da quantidade a devolver para o troco e remover
+	MOV R1, Quantidade_Moedas_020	; R1 vai possuir o endereco da quantidade do Stock Monetario
+	CALL AtualizarStock_Alteracao_Stock 
+	;notas de 5
+	MOV R0, qt_010				  	; R0 vai possuir o endereco da quantidade a devolver para o troco e remover
+	MOV R1, Quantidade_Moedas_010	; R1 vai possuir o endereco da quantidade do Stock Monetario
+	CALL AtualizarStock_Alteracao_Stock 
+	CALLF ResetVarsQT_
+	POP R3
+	POP R2
+	POP R1
+	POP R0
+	RET
+
+; R0 = qt_...
+; R1 = Quantidade_Notas_...
+AtualizarStock_Alteracao_Stock:
+	MOV R0, [R0]					; R0 vai possuir o valor da quantidade a devolver para o troco e remover
+	MOV R2 , ARG1
+	MOV [R2] , R1					; ARG1 = endereco de onde esta o numero a converter
+	CALLF ConverterNumero2B
+	MOV R3 , [R2]					; R1 = Quantidade_Notas_500
+	ADD R3 , R0
+	MOV [R2] , R3					; ARG1 = numero atualizado
+	MOV R3 , ARG2
+	MOV [R3] , R1					; ARG2 = endereco de onde colocar
+	CALLF ColocarNumero2B
+	RET
+
+; rotina usada para colocar a 0 as variaveis qt
+ResetVarsQT_:
+	PUSH R0
+	PUSH R1
+	MOV R1 , 0 						; R1 = 0
+	MOV R0, qt_5
+	MOV [R0] , R1					; qt_5 = 0
+	MOV R0, qt_2
+	MOV [R0] , R1					; qt_2 = 0
+	MOV R0, qt_1
+	MOV [R0] , R1					; qt_1 = 0
+	MOV R0, qt_050
+	MOV [R0] , R1					; qt_050 = 0
+	MOV R0, qt_020
+	MOV [R0] , R1					; qt_020 = 0
+	MOV R0, qt_010
+	MOV [R0] , R1					; qt_010 = 0
+	POP R1
+	POP R0
+	RETF
+
 
 ; usado para determinar a pagina atual 
 ; ARG1 Size total
