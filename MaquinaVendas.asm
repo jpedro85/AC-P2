@@ -494,9 +494,7 @@
 		ARG5: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
 		ARG6: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
 		ARG7: 			WORD 0					; Criação da variavel que permite passar argumentos para as funcoes
-		
-		gggggst EQU 5000H;dsa
-		
+				
 		PLACE 5010H
 		Senha : 								; variavel guarda a senha do stock
 			STRING "M@q2!Ve#"
